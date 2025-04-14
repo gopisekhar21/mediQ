@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<!-- Load auth.js first -->
+<script src="scripts/auth.js"></script>
+<!-- Verify loading -->
+<script>
+  if (!window.MediQAuth) {
+    console.error('Critical Error: MediQAuth not loaded');
+    alert('System error: Authentication service failed to load. Please contact support.');
+  }
+</script>
+<script type="module" src="scripts/supabase.js"></script>
+<script type="module" src="scripts/appointments.js"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Medical Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://ai-public.creatie.ai/gen_page/tailwind-custom.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="large"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places"></script>
+    <style>
+        :root {
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        .dark {
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --card-bg: #1f2937;
+            --border-color: #374151;
+            --gradient-from: #1f2937;
+            --gradient-to: #111827;
+        }
+
+        .dark .bg-gradient-to-br {
+            background-image: linear-gradient(to bottom right, var(--gradient-from), var(--gradient-to));
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .bg-white, .bg-gray-50 {
+            background-color: var(--card-bg) !important;
+        }
+
+        .dark .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .text-gray-900 {
+            color: var(--text-primary) !important;
+        }
+
+        .text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+
+        .border-gray-100 {
+            border-color: var(--border-color) !important;
+        }
+
+        .medication-form {
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%) scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .medication-form.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+        #formOverlay {
+            transition: opacity 0.3s ease;
+        }
+        .blur-background {
+            backdrop-filter: blur(5px);
+        }
+        .medication-item {
+            transition: transform 0.2s ease;
+        }
+        .medication-item:active {
+            transform: scale(0.98);
+        }
+        .action-buttons {
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+        .medication-item.active .action-buttons {
+            opacity: 1;
+        }
+    </style>
+    <script>
+        // Settings Panel Functions
+        const settingsButton = document.getElementById('settingsButton');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const closeSettings = document.getElementById('closeSettings');
+        const darkModeToggleSetting = document.getElementById('darkModeToggleSetting');
+
+        settingsButton.addEventListener('click', () => {
+            settingsPanel.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeSettings.addEventListener('click', () => {
+            settingsPanel.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        });
+
+        darkModeToggleSetting.addEventListener('change', (e) => {
+            document.documentElement.classList.toggle('dark', e.target.checked);
+            localStorage.setItem('theme', e.target.checked ? 'dark' : 'light');
+        });
+
+        // Initialize settings panel
+        darkModeToggleSetting.checked = document.documentElement.classList.contains('dark');
+
+        // Medication Form Functions
+        function openMedicationForm() {
+            document.getElementById('medicationForm').classList.add('active');
+            document.getElementById('formOverlay').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('formOverlay').style.opacity = '1';
+            }, 10);
+        }
+
+        function closeMedicationForm() {
+            document.getElementById('medicationForm').classList.remove('active');
+            document.getElementById('formOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('formOverlay').classList.add('hidden');
+            }, 300);
+        }
+
+        function saveMedication() {
+            // Get form values
+            const name = document.querySelector('#medicationForm input[name="medicationName"]').value;
+            const dosage = document.querySelector('#medicationForm input[name="dosage"]').value;
+            const frequency = document.querySelector('#medicationForm select').value;
+            const time = document.querySelector('#medicationForm input[type="time"]').value;
+            const refillDate = document.querySelector('#medicationForm input[name="refillDate"]').value;
+            const pillsRemaining = document.querySelector('#medicationForm input[name="pillsRemaining"]').value;
+            
+            // Validate inputs
+            const errorMessages = [];
+            if (!name) errorMessages.push('Medication name is required');
+            if (!dosage) errorMessages.push('Dosage is required'); 
+            if (!time) errorMessages.push('Time is required');
+            
+            if (errorMessages.length > 0) {
+                const errorContainer = document.getElementById('medicationErrors');
+                errorContainer.innerHTML = errorMessages.map(msg => 
+                    `<p class="text-red-500 dark:text-red-400 text-sm">${msg}</p>`
+                ).join('');
+                errorContainer.classList.remove('hidden');
+                return;
+            }
+            
+            // Clear any previous errors
+            document.getElementById('medicationErrors').classList.add('hidden');
+
+            // Create new medication item
+            const medicationItem = document.createElement('div');
+            medicationItem.className = 'bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200';
+            medicationItem.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fas fa-pills text-blue-500 dark:text-blue-400 mr-3"></i>
+                        <div>
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${name}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300">${dosage} • ${frequency} at ${time}</div>
+                            ${refillDate ? `<div class="text-xs text-blue-500 dark:text-blue-400 mt-1">Refill: ${refillDate} (${pillsRemaining} left)</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-1 text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="p-1 text-gray-500 hover:text-red-500 dark:hover:text-red-400">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Add to schedule section
+            const scheduleSection = document.querySelector('.schedule-section');
+            scheduleSection.insertBefore(medicationItem, scheduleSection.children[1]);
+            
+            // Close form
+            closeMedicationForm();
+            
+            // Reset form
+            document.querySelector('#medicationForm form').reset();
+        }
+
+        let lastScroll = window.pageYOffset;
+        const navbar = document.querySelector('aside');
+        const threshold = 10; // Minimum scroll distance to trigger hide/show
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            const scrollDiff = Math.abs(currentScroll - lastScroll);
+            
+            if (scrollDiff > threshold) {
+                if (currentScroll > lastScroll && currentScroll > 100) {
+                    // Scrolling down past 100px
+                    navbar.style.transform = 'translate(-50%, 100px)';
+                } else {
+                    // Scrolling up or at top
+                    navbar.style.transform = 'translate(-50%, 0)';
+                }
+                lastScroll = currentScroll;
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <div class="flex flex-col min-h-screen max-w-[1600px] mx-auto relative pb-20">
+        <aside class="fixed bottom-4 left-1/2 bg-white shadow-lg rounded-full h-16 px-6 flex items-center justify-center transition-transform duration-300 ease-in-out z-50" style="width: 90%; max-width: 500px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translate(-50%, 0)">
+            <nav class="flex justify-between items-center w-full gap-4">
+                <a href="#" class="flex flex-col items-center px-3 py-2 text-blue-500 hover:bg-blue-50/50 transition-all duration-200 rounded-full">
+                    <i class="fas fa-home w-5 text-lg"></i>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="DOCTOR.HTML" class="flex flex-col items-center px-4 py-2 text-green-500 hover:bg-green-50/50 transition-all duration-200 rounded-full">
+                    <i class="fas fa-user-md w-5 text-lg"></i>
+                    <span class="text-xs mt-1">Doctors</span>
+                </a>
+                <a href="DIET.HTML" class="flex flex-col items-center px-4 py-2 text-yellow-500 hover:bg-yellow-50/50 transition-all duration-200 rounded-full">
+                    <i class="fas fa-utensils w-5 text-lg"></i>
+                    <span class="text-xs mt-1">Nutrition</span>
+                </a>
+                <a href="REPORTS.HTML" class="flex flex-col items-center px-4 py-2 text-indigo-500 hover:bg-indigo-50/50 transition-all duration-200 rounded-full">
+                    <i class="fas fa-chart-line w-5 text-lg"></i>
+                    <span class="text-xs mt-1">Reports</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-8 w-full overflow-y-auto">
+        <!-- Login Form (hidden by default) -->
+        <div id="loginForm" class="medication-form fixed top-1/2 left-1/2 w-full max-w-md bg-white p-6 rounded-xl shadow-xl z-50">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Login</h3>
+                <button onclick="closeLoginForm()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="loginEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="loginPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button onclick="closeLoginForm()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition">Cancel</button>
+                    <button onclick="handleLogin()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Form (hidden by default) -->
+        <div id="signupForm" class="medication-form fixed top-1/2 left-1/2 w-full max-w-md bg-white p-6 rounded-xl shadow-xl z-50">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Sign Up</h3>
+                <button onclick="closeSignupForm()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input type="text" id="signupName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="signupEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="signupPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button onclick="closeSignupForm()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition">Cancel</button>
+                    <button onclick="handleSignup()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Sign Up</button>
+                </div>
+            </div>
+        </div>
+            <!-- Appointment Form (hidden by default) -->
+            <div id="appointmentForm" class="medication-form fixed top-1/2 left-1/2 w-full max-w-md bg-white p-6 rounded-xl shadow-xl z-50">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">Schedule New Appointment</h3>
+                    <button onclick="closeAppointmentForm()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Dr. Smith (Cardiology)</option>
+                            <option>Dr. Johnson (Neurology)</option>
+                            <option>Dr. Williams (Pediatrics)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                        <input type="time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button onclick="closeAppointmentForm()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition">Cancel</button>
+                        <button onclick="saveAppointment()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Schedule</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medication Form (hidden by default) -->
+            <div id="medicationForm" class="medication-form fixed top-1/2 left-1/2 w-full max-w-md bg-white p-6 rounded-xl shadow-xl z-50">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">Add New Medication</h3>
+                    <button onclick="closeMedicationForm()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="medicationErrors" class="hidden space-y-1 mb-4"></div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Medication Name</label>
+                        <input type="text" name="medicationName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dosage</label>
+                        <input type="text" name="dosage" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Frequency</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Once daily</option>
+                            <option>Twice daily</option>
+                            <option>Three times daily</option>
+                            <option>As needed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                        <input type="time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Refill Date</label>
+                        <input type="date" name="refillDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pills Remaining</label>
+                        <input type="number" name="pillsRemaining" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 30">
+                    </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button onclick="closeMedicationForm()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition">Cancel</button>
+                    <button onclick="saveMedication()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Save</button>
+                </div>
+                </div>
+            </div>
+            <div id="formOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+            
+            <!-- Settings Panel -->
+            <div id="settingsPanel" class="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Settings</h2>
+                        <button id="closeSettings" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-medium mb-3">Account Settings</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span>Dark Mode</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" id="darkModeToggleSetting">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span>Notifications</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium mb-3">Website Preferences</h3>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <label class="block text-sm font-medium mb-1">Language</label>
+                                    <select class="w-full p-2 border border-gray-300 rounded-md">
+                                        <option>English</option>
+                                        <option>Spanish</option>
+                                        <option>French</option>
+                                    </select>
+                                </div>
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <label class="block text-sm font-medium mb-1">Font Size</label>
+                                    <select class="w-full p-2 border border-gray-300 rounded-md">
+                                        <option>Small</option>
+                                        <option selected>Medium</option>
+                                        <option>Large</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+                            Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <header class="flex justify-between items-center mb-8">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-hospital text-blue-600 text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Welcome back, John!</h1>
+                        <p class="text-gray-600">Let's check your health status</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-gray-600 hover:bg-gray-100 !rounded-button">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button id="darkModeToggle" class="p-2 px-3 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full border border-gray-200 dark:border-gray-600 flex items-center gap-2">
+                        <i class="fas fa-moon dark:hidden text-sm"></i>
+                        <i class="fas fa-sun hidden dark:block text-sm"></i>
+                        <span class="text-xs font-medium dark:hidden">Dark</span>
+                        <span class="text-xs font-medium hidden dark:block">Light</span>
+                    </button>
+                    <img src="https://creatie.ai/ai/api/search-image?query=A professional headshot of a middle-aged man with a friendly smile, wearing casual business attire, against a neutral background. The lighting is soft and natural, highlighting his approachable demeanor.&width=40&height=40&orientation=squarish&flag=f1dce5d7-8c13-4acc-a1d5-47a9f561d198&flag=ff22a1fc-3666-41e8-8d1f-e70a5d0460b2&flag=0e717633-1693-463d-9aae-2f4b03b88d72&flag=ae79a2eb-1fa8-4236-b496-55d2f5388ec9&flag=f73c3835-ff6c-4c76-afaa-08000aa691ef&flag=e3a31595-ba94-46a7-8e38-4b7d07450cf3&flag=43dabd7b-399d-401c-a640-ce01e6bbe323&flag=57841b24-a83e-4f78-8b0f-939dc155b898&flag=4d0c72cb-f798-438f-9a75-d930c548fc2e&flag=820f7e3c-64d9-45ab-a486-454248ef720b&flag=54146aaf-fbe5-465a-88a5-a9c55c9c6830&flag=f6b31ee6-aec4-4dd8-b966-1e4f07665c31&flag=b2d2f289-378a-4260-9c9e-e0255664467a" alt="Profile" class="w-10 h-10 rounded-full"/>
+                    <button id="settingsButton" class="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-4 gap-8 mb-8">
+                <div class="group p-8 rounded-2xl shadow-sm transition-all duration-300 bg-gradient-to-br from-red-50 to-red-100 hover:shadow-lg hover:-translate-y-1 border-4 border-red-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-red-600 font-medium">Heart Rate</div>
+                        <i class="fas fa-heartbeat text-red-500 text-xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">72 <span class="text-xl">BPM</span></div>
+                    <div class="flex items-center text-sm text-red-600 mb-4">
+                        <i class="fas fa-arrow-up mr-1"></i> Normal
+                    </div>
+                    <div id="heartRateChart" class="h-20"></div>
+                </div>
+                <div class="group p-8 rounded-2xl shadow-sm transition-all duration-300 bg-gradient-to-br from-green-50 to-green-100 hover:shadow-lg hover:-translate-y-1 border-4 border-green-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-green-600 font-medium">Steps Today</div>
+                        <i class="fas fa-walking text-green-500 text-xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">8,439</div>
+                    <div class="relative h-3 bg-white bg-opacity-50 rounded-full mt-4 mb-2 overflow-hidden">
+                        <div class="absolute top-0 left-0 h-full bg-green-500 rounded-full transition-all duration-1000" style="width: 70%"></div>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-green-600">70%</span>
+                        <span class="text-gray-600">Goal: 10,000</span>
+                    </div>
+                </div>
+                <div class="group p-8 rounded-2xl shadow-sm transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg hover:-translate-y-1 border-4 border-blue-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-blue-600 font-medium">Water Intake</div>
+                        <i class="fas fa-tint text-blue-500 text-xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">1.8<span class="text-xl">L</span></div>
+                    <div class="relative h-3 bg-white bg-opacity-50 rounded-full mt-4 mb-2 overflow-hidden">
+                        <div class="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-all duration-1000" style="width: 60%"></div>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-blue-600">60%</span>
+                        <span class="text-gray-600">Goal: 3.0L</span>
+                    </div>
+                </div>
+                <div class="group p-8 rounded-2xl shadow-sm transition-all duration-300 bg-gradient-to-br from-indigo-50 to-indigo-100 hover:shadow-lg hover:-translate-y-1 border-4 border-indigo-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-indigo-600 font-medium">Sleep</div>
+                        <i class="fas fa-moon text-indigo-500 text-xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">7<span class="text-xl">h</span> 20<span class="text-xl">m</span></div>
+                    <div class="flex items-center text-sm text-indigo-600 mb-4">
+                        <i class="fas fa-check-circle mr-1"></i> Good
+                    </div>
+                    <div id="sleepChart" class="h-20"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8 mb-8">
+                <div class="group p-6 rounded-2xl shadow-sm transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg hover:-translate-y-1 border-4 border-blue-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-calendar-check text-blue-500"></i>
+                            Upcoming Appointments
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button onclick="openAppointmentForm()" class="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center text-sm">
+                                <i class="fas fa-plus mr-1"></i>Add Appointment
+                            </button>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-4 relative">
+                        <div class="group-hover:opacity-100 group-hover:translate-x-0 opacity-0 -translate-x-2 absolute right-6 top-1/2 transform -translate-y-1/2 text-blue-500 transition-all duration-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="flex items-center p-4 rounded-xl bg-white bg-opacity-70 backdrop-blur-sm border border-blue-100 hover:border-blue-200 transition-all duration-200">
+                            <img src="https://creatie.ai/ai/api/search-image?query=A professional headshot of a female doctor in her 40s wearing a white coat and stethoscope, with a warm and confident expression, against a clean medical office background.&width=48&height=48&orientation=squarish&flag=17d15bbc-17a5-4f44-b055-92cc36372000&flag=f73425fa-502a-42dd-b64d-29479acb3c17&flag=7701973a-f209-427e-8c14-98a57cd31831&flag=bfdf0363-78ad-4d72-af8d-ec13fb1de0b8&flag=0240a1c2-d2d7-4169-9d8b-c91065d3ec6c&flag=aed55326-ed38-4552-811d-3f44eb56c97e&flag=ab0b405d-7340-4dec-9c61-99b274006833&flag=959a69c4-116e-42d4-9987-f841f23ae88a&flag=f63f1a6a-c6f8-4c14-bcda-0e36c4cdbc25&flag=8bf94187-4335-4ff8-b861-6a33d9a22fe4&flag=13de3b7e-0169-4b64-a211-a3f0fa8b4de4&flag=f1c858ae-f73a-4d46-894a-25b958030598&flag=1b3573ba-bf4a-4a77-9481-84f408839ba2" alt="Doctor" class="w-12 h-12 rounded-full"/>
+                            <div class="ml-4">
+                                <div class="font-medium">Dr. Sarah Wilson</div>
+                                <div class="text-sm text-blue-600 font-medium">Cardiologist</div>
+                                <div class="flex items-center mt-1">
+                                    <span class="text-sm text-gray-900">Tomorrow, 10:00 AM</span>
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full ml-2">New</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-4 rounded-xl bg-white bg-opacity-70 backdrop-blur-sm border border-blue-100 hover:border-blue-200 transition-all duration-200">
+                            <img src="https://creatie.ai/ai/api/search-image?query=A professional headshot of a male doctor in his 50s wearing a white coat and glasses, with a kind and experienced expression, against a clean medical office background.&width=48&height=48&orientation=squarish&flag=2e1e3faf-2586-4ffc-8738-e609b8a0a91c&flag=09f682db-0ca7-430d-8e6f-3507289759c3&flag=0b6fcf78-5f76-401c-968a-58d58d94572a&flag=f4ee6b22-5517-4906-b5cc-ad96ed8abba8&flag=8e85b76d-0a0b-4873-9eb4-325bc5304a1b&flag=9ea2fe21-c6b5-4029-b7f7-178d475cf283&flag=3d2c2f70-a8f0-4424-a578-aa1257aafa8e&flag=1855775e-61f5-466c-a75d-65fb0b63db1d&flag=8d511af9-a0b2-4e72-9939-43d8529261ac&flag=495e5f9f-4f9c-4d90-96b7-5ce0b1ce2949&flag=628c6df0-606b-4d08-877c-5e217570970b&flag=a1eab27e-8de3-49fc-b110-20bb8594e198&flag=263c33f6-c6a9-40f8-838a-d2f7a59f952f" alt="Doctor" class="w-12 h-12 rounded-full"/>
+                            <div class="ml-4">
+                                <div class="font-medium">Dr. Michael Brown</div>
+                                <div class="text-sm text-blue-600 font-medium">General Physician</div>
+                                <div class="text-sm text-gray-900">Friday, 2:30 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Highly Rated Doctors</h3>
+                            <div class="flex space-x-2">
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                    View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="p-4 bg-blue-50 rounded-lg flex items-center">
+                                <img src="https://creatie.ai/ai/api/search-image?query=professional+doctor+portrait&width=80&height=80" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <div class="font-medium">Dr. Sarah Johnson</div>
+                                    <div class="text-sm text-blue-600">Cardiologist</div>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-yellow-500">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </span>
+                                        <span class="text-sm text-gray-600 ml-2">4.8 (120 reviews)</span>
+                                    </div>
+                                    <button class="mt-2 px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition">
+                                        Book Appointment
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-blue-50 rounded-lg flex items-center">
+                                <img src="https://creatie.ai/ai/api/search-image?query=professional+doctor+portrait&width=80&height=80" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <div class="font-medium">Dr. Michael Chen</div>
+                                    <div class="text-sm text-blue-600">Neurologist</div>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-yellow-500">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                        <span class="text-sm text-gray-600 ml-2">5.0 (95 reviews)</span>
+                                    </div>
+                                    <button class="mt-2 px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition">
+                                        Book Appointment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-lg font-semibold mb-4">Appointment History</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                                    <i class="fas fa-calendar-check text-gray-500"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Dr. Michael Brown</div>
+                                    <div class="text-sm text-gray-600">General Checkup</div>
+                                    <div class="text-xs text-gray-500">Completed: 2023-06-15</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                                    <i class="fas fa-calendar-check text-gray-500"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Dr. Sarah Wilson</div>
+                                    <div class="text-sm text-gray-600">Cardiology Consultation</div>
+                                    <div class="text-xs text-gray-500">Completed: 2023-05-20</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="group p-6 rounded-2xl shadow-sm transition-all duration-300 bg-gradient-to-br from-purple-50 to-purple-100 hover:shadow-lg hover:-translate-y-1 border-4 border-purple-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-pills text-purple-500"></i>
+                            Medication Schedule
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button onclick="openMedicationForm()" class="px-3 py-1.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition flex items-center text-sm">
+                                <i class="fas fa-plus mr-1"></i>Add Medication
+                            </button>
+                            <button class="text-purple-600 hover:text-purple-800 text-sm font-medium flex items-center">
+                                View All <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-white bg-opacity-70 backdrop-blur-sm border border-purple-100">
+                            <h3 class="text-lg font-semibold mb-3">Current Medications</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-pills text-purple-500 mr-3"></i>
+                                        <div>
+                                            <div class="font-medium">Lisinopril</div>
+                                            <div class="text-sm text-gray-600">10mg • Once daily</div>
+                                            <div class="text-xs text-purple-500">Refill: 2023-07-15 (30 left)</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-purple-500 hover:text-purple-700">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-pills text-purple-500 mr-3"></i>
+                                        <div>
+                                            <div class="font-medium">Atorvastatin</div>
+                                            <div class="text-sm text-gray-600">20mg • Once at bedtime</div>
+                                            <div class="text-xs text-purple-500">Refill: 2023-07-20 (45 left)</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-purple-500 hover:text-purple-700">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white bg-opacity-70 backdrop-blur-sm border border-purple-100">
+                            <h3 class="text-lg font-semibold mb-3">Medication History</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <i class="fas fa-pills text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="font-medium">Aspirin</div>
+                                        <div class="text-sm text-gray-600">81mg • Once daily</div>
+                                        <div class="text-xs text-gray-500">Stopped: 2023-05-15 (Completed course)</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <i class="fas fa-pills text-gray-500 mr-3"></i>
+                                    <div>
+                                        <div class="font-medium">Amoxicillin</div>
+                                        <div class="text-sm text-gray-600">500mg • Twice daily</div>
+                                        <div class="text-xs text-gray-500">Stopped: 2023-03-10 (Completed course)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-white bg-opacity-70 backdrop-blur-sm border border-purple-100 hover:border-purple-200 transition-all duration-200">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center group-hover:bg-red-200 transition-all duration-200 mr-3">
+                                    <i class="fas fa-pills text-red-500 group-hover:text-red-600 transition-all duration-200"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Aspirin</div>
+                                    <div class="text-sm text-red-600 font-medium">1 pill, after breakfast</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-sm text-gray-900 mr-3">8:00 AM</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer"/>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-white bg-opacity-70 backdrop-blur-sm border border-purple-100 hover:border-purple-200 transition-all duration-200">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-all duration-200 mr-3">
+                                    <i class="fas fa-pills text-purple-500 group-hover:text-purple-600 transition-all duration-200"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Vitamin D</div>
+                                    <div class="text-sm text-purple-600 font-medium">1 tablet, with lunch</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-sm text-gray-900 mr-3">12:30 PM</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer"/>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all duration-200 border-4 border-gray-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-utensils text-green-500"></i>
+                            Today's Diet Plan
+                        </h2>
+                        <button onclick="openDietForm()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center text-sm">
+                            <i class="fas fa-plus mr-1"></i>Add Meal
+                        </button>
+                    </div>
+                    <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm font-medium text-gray-700">Daily Nutrition Goals</div>
+                            <div class="text-xs text-blue-600">2000 kcal</div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2 mt-2 text-xs">
+                            <div class="bg-white p-2 rounded text-center">
+                                <div class="font-medium text-green-600">Protein</div>
+                                <div>120g</div>
+                            </div>
+                            <div class="bg-white p-2 rounded text-center">
+                                <div class="font-medium text-yellow-600">Carbs</div>
+                                <div>250g</div>
+                            </div>
+                            <div class="bg-white p-2 rounded text-center">
+                                <div class="font-medium text-red-600">Fats</div>
+                                <div>65g</div>
+                            </div>
+                            <div class="bg-white p-2 rounded text-center">
+                                <div class="font-medium text-blue-600">Water</div>
+                                <div>3L</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="meal-item flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-all duration-200 cursor-pointer" 
+                             data-meal='{
+                                 "name": "Breakfast",
+                                 "time": "8:00 AM",
+                                 "description": "Oatmeal with fruits",
+                                 "calories": 420,
+                                 "protein": 12,
+                                 "carbs": 75,
+                                 "fats": 8,
+                                 "ingredients": ["1/2 cup rolled oats", "1 cup almond milk", "1 tbsp honey", "1/2 banana", "1/4 cup blueberries"],
+                                 "instructions": "1. Cook oats with almond milk\n2. Top with banana, blueberries and honey"
+                             }'>
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-utensils text-green-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium">Breakfast</div>
+                                <div class="text-sm text-gray-600">Oatmeal with fruits</div>
+                                <div class="flex mt-1 space-x-2 text-xs">
+                                    <span class="text-green-600">420 kcal</span>
+                                    <span class="text-blue-600">12g protein</span>
+                                </div>
+                            </div>
+                            <div class="text-green-500 text-sm font-medium">8:00 AM</div>
+                        </div>
+                        <div class="meal-item flex items-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-all duration-200 cursor-pointer"
+                             data-meal='{
+                                 "name": "Lunch",
+                                 "time": "1:00 PM",
+                                 "description": "Grilled chicken salad",
+                                 "calories": 550,
+                                 "protein": 45,
+                                 "carbs": 30,
+                                 "fats": 25,
+                                 "ingredients": ["150g chicken breast", "2 cups mixed greens", "1/4 avocado", "10 cherry tomatoes", "1 tbsp olive oil"],
+                                 "instructions": "1. Grill chicken breast\n2. Toss with greens and vegetables\n3. Dress with olive oil"
+                             }'>
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-apple-alt text-red-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium">Lunch</div>
+                                <div class="text-sm text-gray-600">Grilled chicken salad</div>
+                                <div class="flex mt-1 space-x-2 text-xs">
+                                    <span class="text-green-600">550 kcal</span>
+                                    <span class="text-blue-600">45g protein</span>
+                                </div>
+                            </div>
+                            <div class="text-red-500 text-sm font-medium">1:00 PM</div>
+                        </div>
+                        <div class="meal-item flex items-center p-3 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-all duration-200 cursor-pointer"
+                             data-meal='{
+                                 "name": "Dinner",
+                                 "time": "7:30 PM",
+                                 "description": "Salmon with vegetables",
+                                 "calories": 600,
+                                 "protein": 40,
+                                 "carbs": 45,
+                                 "fats": 30,
+                                 "ingredients": ["150g salmon fillet", "1 cup roasted vegetables", "1/2 cup quinoa", "1 tsp olive oil", "Lemon wedge"],
+                                 "instructions": "1. Season salmon and bake at 400°F for 12-15 mins\n2. Cook quinoa\n3. Roast vegetables with olive oil"
+                             }'>
+                            <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-drumstick-bite text-yellow-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium">Dinner</div>
+                                <div class="text-sm text-gray-600">Salmon with vegetables</div>
+                                <div class="flex mt-1 space-x-2 text-xs">
+                                    <span class="text-green-600">600 kcal</span>
+                                    <span class="text-blue-600">40g protein</span>
+                                </div>
+                            </div>
+                            <div class="text-yellow-500 text-sm font-medium">7:30 PM</div>
+                        </div>
+                    </div>
+                    <!-- Meal Detail Modal -->
+                    <div id="mealModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                        <div class="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 id="mealModalTitle" class="text-xl font-bold"></h3>
+                                    <button onclick="closeMealModal()" class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div id="mealModalContent" class="space-y-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm p-6 border-4 border-gray-200">
+                    <h2 class="text-lg font-semibold mb-6 flex items-center gap-2">
+                        <i class="fas fa-bolt text-blue-500"></i>
+                        Quick Actions
+                    </h2>
+                    <div class="grid grid-cols-2 gap-5">
+                        <button class="group p-5 bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-blue-100 hover:to-blue-50">
+                            <i class="fas fa-stethoscope text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Symptom Check</span>
+                        </button>
+                        <button class="group p-5 bg-gradient-to-br from-green-50 to-green-100 text-green-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-green-100 hover:to-green-50">
+                            <i class="fas fa-video text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Video Call</span>
+                        </button>
+                        <button class="group p-5 bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-purple-100 hover:to-purple-50">
+                            <i class="fas fa-file-medical text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Reports</span>
+                        </button>
+                        <button class="group p-5 bg-gradient-to-br from-red-50 to-red-100 text-red-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-red-100 hover:to-red-50">
+                            <i class="fas fa-ambulance text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Emergency</span>
+                        </button>
+                        <button class="group p-5 bg-gradient-to-br from-orange-50 to-orange-100 text-orange-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-orange-100 hover:to-orange-50">
+                            <i class="fas fa-flask text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Lab Tests</span>
+                        </button>
+                        <button class="group p-5 bg-gradient-to-br from-teal-50 to-teal-100 text-teal-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-teal-100 hover:to-teal-50">
+                            <i class="fas fa-prescription text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Prescriptions</span>
+                        </button>
+                        <button class="group p-5 bg-gradient-to-br from-indigo-50 to-indigo-100 text-indigo-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-indigo-100 hover:to-indigo-50">
+                            <i class="fas fa-clipboard-list text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Health Log</span>
+                        </button>
+                        <button class="group p-5 bg-gradient-to-br from-pink-50 to-pink-100 text-pink-600 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:from-pink-100 hover:to-pink-50">
+                            <i class="fas fa-comment-medical text-2xl mb-3 group-hover:text-3xl transition-all duration-300"></i>
+                            <span class="text-sm font-medium">Chat Support</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all duration-200 border-4 border-gray-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-hospital text-blue-500"></i>
+                            Nearby Hospitals
+                        </h2>
+                        <button onclick="findNearbyHospitals()" class="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-1 hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-sync-alt text-xs"></i>
+                            Refresh
+                        </button>
+                    </div>
+                    
+                    <div id="hospitalMap" class="h-[200px] rounded-lg border border-gray-200 mb-4 hover:shadow-inner transition-all duration-200"></div>
+                    
+                    <div id="hospitalsList" class="space-y-3">
+                        <div class="hospital-card group p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-200 cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-all">
+                                    <i class="fas fa-hospital text-blue-600 group-hover:text-blue-800"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-blue-800">City General Hospital</div>
+                                    <div class="text-sm text-blue-600">1.2 miles away</div>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs bg-white text-green-800 px-2 py-0.5 rounded-full">24/7 ER</span>
+                                        <span class="text-xs bg-white text-purple-800 px-2 py-0.5 rounded-full">Cardiology</span>
+                                    </div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-200 transition-all">
+                                    <i class="fas fa-directions"></i>
+                                </button>
+                            </div>
+                            <div class="mt-2 flex items-center text-xs text-blue-600">
+                                <i class="fas fa-phone-alt mr-1"></i>
+                                <span>(555) 123-4567</span>
+                            </div>
+                        </div>
+                        
+                        <div class="hospital-card group p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-200 cursor-pointer">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-all">
+                                    <i class="fas fa-hospital text-blue-600 group-hover:text-blue-800"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-blue-800">Children's Medical Center</div>
+                                    <div class="text-sm text-blue-600">2.5 miles away</div>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs bg-white text-green-800 px-2 py-0.5 rounded-full">Pediatrics</span>
+                                        <span class="text-xs bg-white text-orange-800 px-2 py-0.5 rounded-full">Urgent Care</span>
+                                    </div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-200 transition-all">
+                                    <i class="fas fa-directions"></i>
+                                </button>
+                            </div>
+                            <div class="mt-2 flex items-center text-xs text-blue-600">
+                                <i class="fas fa-phone-alt mr-1"></i>
+                                <span>(555) 987-6543</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="hospitalsLoading" class="text-center py-4 text-gray-500">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        Finding nearby hospitals...
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const heartRateChart = echarts.init(document.getElementById('heartRateChart'));
+        const heartRateOption = {
+            animation: false,
+            grid: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0
+            },
+            xAxis: {
+                type: 'category',
+                show: false,
+                data: Array.from({length: 24}, (_, i) => i)
+            },
+            yAxis: {
+                type: 'value',
+                show: false
+            },
+            series: [{
+                data: [70, 71, 73, 72, 71, 74, 72, 73, 70, 72, 71, 70, 72, 73, 71, 72, 70, 71, 73, 72, 71, 72, 73, 72],
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: {
+                    color: '#EF4444'
+                },
+                areaStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                            offset: 0,
+                            color: 'rgba(239, 68, 68, 0.2)'
+                        }, {
+                            offset: 1,
+                            color: 'rgba(239, 68, 68, 0)'
+                        }]
+                    }
+                }
+            }]
+        };
+        heartRateChart.setOption(heartRateOption);
+
+        const sleepChart = echarts.init(document.getElementById('sleepChart'));
+        const sleepOption = {
+            animation: false,
+            grid: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0
+            },
+            xAxis: {
+                type: 'category',
+                show: false,
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value',
+                show: false
+            },
+            series: [{
+                data: [7, 6.5, 8, 7.5, 7, 6, 7.3],
+                type: 'bar',
+                barWidth: '60%',
+                itemStyle: {
+                    color: '#818CF8'
+                }
+            }]
+        };
+        sleepChart.setOption(sleepOption);
+
+        // Nearby Hospitals Functionality
+        const hospitalMap = new google.maps.Map(document.getElementById('hospitalMap'), {
+            center: {lat: -34.397, lng: 150.644},
+            zoom: 15,
+            disableDefaultUI: true,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
+        });
+
+        const hospitalsList = document.getElementById('hospitalsList');
+        let infoWindow = new google.maps.InfoWindow();
+
+        function findNearbyHospitals() {
+            const loadingElement = document.getElementById('hospitalsLoading');
+            const hospitalsList = document.getElementById('hospitalsList');
+            
+            loadingElement.classList.remove('hidden');
+            hospitalsList.innerHTML = '';
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        loadingElement.classList.add('hidden');
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        hospitalMap.setCenter(userLocation);
+                        new google.maps.Marker({
+                            position: userLocation,
+                            map: hospitalMap,
+                            icon: {
+                                url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                            }
+                        });
+
+                        const service = new google.maps.places.PlacesService(hospitalMap);
+                        service.nearbySearch({
+                            location: userLocation,
+                            radius: 5000,
+                            type: 'hospital'
+                        }, (results, status) => {
+                            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                hospitalsList.innerHTML = '';
+                                results.slice(0, 3).forEach((place) => {
+                                    const distance = getDistance(
+                                        userLocation.lat,
+                                        userLocation.lng,
+                                        place.geometry.location.lat(),
+                                        place.geometry.location.lng()
+                                    ).toFixed(1);
+
+                                    const hospitalItem = document.createElement('div');
+                                    hospitalItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer';
+                                    hospitalItem.innerHTML = `
+                                        <div class="font-medium">${place.name}</div>
+                                    <div class="text-sm text-gray-600">${distance} km</div>
+                                    `;
+                                    hospitalItem.addEventListener('click', () => {
+                                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${place.geometry.location.lat()},${place.geometry.location.lng()}&travelmode=driving`, '_blank');
+                                    });
+                                    hospitalsList.appendChild(hospitalItem);
+
+                                    new google.maps.Marker({
+                                        position: place.geometry.location,
+                                        map: hospitalMap,
+                                        title: place.name
+                                    });
+                                });
+                            } else {
+                                hospitalsList.innerHTML = '<div class="text-center py-4 text-gray-500">Could not find nearby hospitals</div>';
+                            }
+                        });
+                    },
+                    () => {
+                        loadingElement.classList.add('hidden');
+                        hospitalsList.innerHTML = '<div class="text-center py-4 text-gray-500">Location access denied</div>';
+                    }
+                );
+            } else {
+                hospitalsList.innerHTML = '<div class="text-center py-4 text-gray-500">Geolocation not supported</div>';
+            }
+        }
+
+        // Helper function to calculate distance between two points
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the earth in km
+            const dLat = deg2rad(lat2-lat1);
+            const dLon = deg2rad(lon2-lon1); 
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2); 
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            const d = R; // Distance in km
+            return d;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180);
+        }
+
+        // Meal Modal Functions
+        function openMealModal(mealData) {
+            document.getElementById('mealModalTitle').textContent = `${mealData.name} - ${mealData.time}`;
+            
+            const content = document.getElementById('mealModalContent');
+            content.innerHTML = `
+                <div>
+                    <h4 class="font-medium text-gray-900">${mealData.description}</h4>
+                    <div class="grid grid-cols-4 gap-2 mt-3 text-sm">
+                        <div class="bg-gray-50 p-2 rounded text-center">
+                            <div class="text-green-600 font-medium">Calories</div>
+                            <div>${mealData.calories}</div>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded text-center">
+                            <div class="text-blue-600 font-medium">Protein</div>
+                            <div>${mealData.protein}g</div>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded text-center">
+                            <div class="text-yellow-600 font-medium">Carbs</div>
+                            <div>${mealData.carbs}g</div>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded text-center">
+                            <div class="text-red-600 font-medium">Fats</div>
+                            <div>${mealData.fats}g</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">Ingredients</h4>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        ${mealData.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">Instructions</h4>
+                    <div class="whitespace-pre-line text-sm text-gray-700">${mealData.instructions}</div>
+                </div>
+            `;
+            
+            document.getElementById('mealModal').classList.remove('hidden');
+        }
+
+        function closeMealModal() {
+            document.getElementById('mealModal').classList.add('hidden');
+        }
+
+        // Initialize meal click handlers
+        document.querySelectorAll('.meal-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const mealData = JSON.parse(item.getAttribute('data-meal'));
+                openMealModal(mealData);
+            });
+        });
+
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            darkModeToggleSetting.checked = isDark;
+        });
+
+        // Initialize hospitals search when page loads
+        window.addEventListener('load', findNearbyHospitals);
+
+        // Authentication Functions
+        function openLoginForm() {
+            document.getElementById('loginForm').classList.add('active');
+            document.getElementById('formOverlay').classList.remove('hidden');
+        }
+
+        function closeLoginForm() {
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById('formOverlay').classList.add('hidden');
+        }
+
+        function openSignupForm() {
+            document.getElementById('signupForm').classList.add('active');
+            document.getElementById('formOverlay').classList.remove('hidden');
+        }
+
+        function closeSignupForm() {
+            document.getElementById('signupForm').classList.remove('active');
+            document.getElementById('formOverlay').classList.add('hidden');
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                await signIn(email, password);
+                alert('Login successful!');
+                closeLoginForm();
+                updateAuthUI();
+                loadAppointments();
+            } catch (error) {
+                alert('Error logging in: ' + error.message);
+            }
+        }
+
+        async function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            try {
+                await signUp(email, password, name);
+                alert('Account created successfully! Please login.');
+                closeSignupForm();
+                openLoginForm();
+            } catch (error) {
+                alert('Error creating account: ' + error.message);
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await signOut();
+                updateAuthUI();
+            } catch (error) {
+                alert('Error logging out: ' + error.message);
+            }
+        }
+
+        async function updateAuthUI() {
+            const { data: { user } } = await getCurrentUser();
+            const authSection = document.getElementById('authSection');
+            
+            if (user) {
+                authSection.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span>Welcome, ${user.user_metadata?.full_name || 'User'}</span>
+                        <button onclick="handleLogout()" class="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300">
+                            Logout
+                        </button>
+                    </div>
+                `;
+            } else {
+                authSection.innerHTML = `
+                    <div class="flex space-x-2">
+                        <button onclick="openLoginForm()" class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
+                            Login
+                        </button>
+                        <button onclick="openSignupForm()" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50">
+                            Sign Up
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize auth UI when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthUI();
+            loadAppointments();
+        });
+
+        // Appointment Form Functions
+        async function handleSaveAppointment() {
+            const doctor = document.querySelector('#appointmentForm select').value;
+            const date = document.querySelector('#appointmentForm input[type="date"]').value;
+            const time = document.querySelector('#appointmentForm input[type="time"]').value;
+            const reason = document.querySelector('#appointmentForm textarea').value;
+
+            try {
+                await saveAppointment(doctor, date, time, reason);
+                alert('Appointment scheduled successfully!');
+                closeAppointmentForm();
+                document.querySelector('#appointmentForm form').reset();
+                // Refresh appointments list
+                loadAppointments();
+            } catch (error) {
+                alert('Error scheduling appointment: ' + error.message);
+            }
+        }
+
+        async function loadAppointments() {
+            try {
+                const appointments = await getAppointments();
+                const container = document.querySelector('.bg-white.rounded-2xl .space-y-4');
+                container.innerHTML = '';
+                
+                appointments.forEach(appt => {
+                    const appointmentItem = document.createElement('div');
+                    appointmentItem.className = 'flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200';
+                    appointmentItem.innerHTML = `
+                        <img src="https://creatie.ai/ai/api/search-image?query=A professional headshot of a ${appt.doctor.split(' ')[1].toLowerCase()} doctor wearing a white coat&width=48&height=48" alt="Doctor" class="w-12 h-12 rounded-full">
+                        <div class="ml-4">
+                            <div class="font-medium">${appt.doctor}</div>
+                            <div class="text-sm text-gray-600">${appt.date} at ${appt.time}</div>
+                            ${appt.reason ? `<div class="text-sm text-gray-500 mt-1">${appt.reason}</div>` : ''}
+                        </div>
+                        <button onclick="deleteAppointment('${appt.id}')" class="ml-auto text-red-500 hover:text-red-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    `;
+                    container.appendChild(appointmentItem);
+                });
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+        async function deleteAppointment(id) {
+            if (confirm('Are you sure you want to delete this appointment?')) {
+                try {
+                    await deleteAppointment(id);
+                    loadAppointments();
+                } catch (error) {
+                    alert('Error deleting appointment: ' + error.message);
+                }
+            }
+        }
+
+        // Load appointments when page loads
+        document.addEventListener('DOMContentLoaded', loadAppointments);
+        function openAppointmentForm() {
+            document.getElementById('appointmentForm').classList.add('active');
+            document.getElementById('formOverlay').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('formOverlay').style.opacity = '1';
+            }, 10);
+        }
+
+        function closeAppointmentForm() {
+            document.getElementById('appointmentForm').classList.remove('active');
+            document.getElementById('formOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('formOverlay').classList.add('hidden');
+            }, 300);
+        }
+
+        async function saveAppointment() {
+            const doctor = document.querySelector('#appointmentForm select').value;
+            const date = document.querySelector('#appointmentForm input[type="date"]').value;
+            const time = document.querySelector('#appointmentForm input[type="time"]').value;
+            const reason = document.querySelector('#appointmentForm textarea').value;
+            
+            // Validate inputs
+            const errorMessages = [];
+            if (!doctor) errorMessages.push('Doctor selection is required');
+            if (!date) errorMessages.push('Date is required');
+            if (!time) errorMessages.push('Time is required');
+
+            if (errorMessages.length > 0) {
+                alert(errorMessages.join('\n'));
+                return;
+            }
+
+            try {
+                // Authentication check
+                if (!window.MediQ?.Auth?.getCurrentUser) {
+                    alert('System error: Authentication service unavailable. Please refresh the page.');
+                    return;
+                }
+
+                const user = await window.MediQ.Auth.getCurrentUser();
+                if (!user) {
+                    alert('Please login to schedule appointments');
+                    openLoginForm();
+                    return;
+                }
+
+                // Extract doctor name and ID (assuming format is "Dr. Name (Specialty)")
+                const [doctorName, specialty] = doctor.split(' (');
+                
+                await window.saveAppointment({
+                    doctorId: crypto.randomUUID(), // Generate a temporary ID
+                    doctorName: doctorName,
+                    date: date,
+                    time: time,
+                    reason: reason,
+                    patient_id: user.id
+                });
+                
+                // Refresh appointments list
+                loadAppointments();
+                closeAppointmentForm();
+                document.querySelector('#appointmentForm form').reset();
+            } catch (error) {
+                console.error('Error saving appointment:', error);
+                alert(`Failed to save appointment: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

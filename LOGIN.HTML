@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Doctor Portal Login</title>
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <style>
+      /* Dark mode toggle switch styles */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: var(--accent-color);
+      }
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://ai-public.creatie.ai/gen_page/tailwind-custom.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="large"></script>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden" style="background-color: var(--bg-primary); color: var(--text-primary);">
+    <div class="w-full max-w-8xl flex items-center justify-center px-4 relative"><div class="absolute top-0 left-0 w-full h-full grid grid-cols-12 gap-4 opacity-10 pointer-events-none"><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div><div class="col-span-1 bg-gray-200/30 blur-sm"></div></div>
+        <div class="w-full max-w-md">
+            <div class="text-center mb-8">
+                <img src="https://ai-public.creatie.ai/gen_page/logo_placeholder.png" alt="Doctor Portal" class="h-12 mx-auto mb-4"/>
+                <h2 class="text-2xl font-semibold text-gray-900">Welcome to Doctor Portal</h2>
+                <p class="mt-2 text-gray-600">Please sign in to access your dashboard</p>
+            </div>
+            <div class="shadow-lg rounded-lg p-8 backdrop-blur-sm border-2" style="background-color: var(--bg-secondary); border-color: var(--accent-color);">
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button class="flex-1 pb-4 text-center font-medium text-gray-500 hover:text-gray-700"><i class="fas fa-user-injured mr-2"></i>Patient Login</button>
+                    <button class="flex-1 pb-4 text-center font-medium text-indigo-600 border-b-2 border-indigo-600"><i class="fas fa-user-md mr-2"></i>Doctor Login</button>
+                </div>
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input id="email" name="email" type="email" required class="!rounded-button block w-full pl-10 py-3 border-2 border-gray-300 focus:ring-custom focus:border-custom" placeholder="Enter your email"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input id="password" name="password" type="password" required class="!rounded-button block w-full pl-10 py-3 border-2 border-gray-300 focus:ring-custom focus:border-custom" placeholder="Enter your password"/>
+                            <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePasswordVisibility()">
+                                <i class="fas fa-eye text-gray-400"></i>
+                            </button>
+                        </div>
+                        <div id="error-message" class="text-red-500 text-sm mt-2 hidden"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" class="h-4 w-4 text-custom focus:ring-custom border-gray-300 !rounded-button"/>
+                            <label class="ml-2 block text-sm text-gray-700">Remember me</label>
+                        </div>
+                        <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="!rounded-button w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Sign in
+                    </button>
+                </form>
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 grid grid-cols-3 gap-3 items-center">
+                        <button class="!rounded-button w-full py-2 px-4 border-2 border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"><img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="h-5 w-5 mx-auto"/></button>
+                        <button class="!rounded-button w-full py-2 px-4 border-2 border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" class="h-5 w-5 mx-auto"/></button>
+                        <button class="!rounded-button w-full py-2 px-4 border-2 border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" class="h-5 w-5 mx-auto"/></button>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-6 text-center text-sm text-gray-600">
+                Don't have an account?
+                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-700">Contact administrator</a>
+            </p>
+        </div>
+    </div>
+    <div class="fixed bottom-4 right-4">
+        <button class="!rounded-button p-4 shadow-lg backdrop-blur-sm border-2" style="background-color: var(--bg-secondary); border-color: var(--accent-color); color: var(--text-primary);">
+            <i class="fas fa-question-circle text-xl"></i>
+        </button>
+    </div>
+<!-- Load Supabase from CDN first -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/theme.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Supabase client with error handling
+  if (typeof supabase !== 'undefined') {
+    window.supabase = supabase.createClient(
+      'https://uwycitmbaloiiapgkrdi.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3eWNpdG1iYWxvaWlhcGdrcmRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTYwMjU2MTgsImV4cCI6MjAxMTYwMTYxOH0.9-ABC123...'
+    )
+  } else {
+    console.error('Supabase not loaded!')
+    document.getElementById('error-message').textContent = 'System error - please refresh'
+    document.getElementById('error-message').classList.remove('hidden')
+  }
+
+  // Password visibility toggle
+  function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password')
+    const eyeIcon = document.querySelector('#password + button i')
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text'
+      eyeIcon.classList.replace('fa-eye', 'fa-eye-slash')
+    } else {
+      passwordInput.type = 'password'
+      eyeIcon.classList.replace('fa-eye-slash', 'fa-eye')
+    }
+  }
+
+  // Check for existing session
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      window.location.href = 'DASHBOARD.HTML'
+    }
+  })
+
+  // Handle login form submission
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    
+    const email = document.getElementById('email').value
+    const password = document.getElementById('password').value
+    const errorElement = document.getElementById('error-message')
+
+    // Show loading state
+    const submitBtn = e.target.querySelector('button[type="submit"]')
+    submitBtn.disabled = true
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Signing in...'
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (error) {
+        errorElement.textContent = error.message
+        errorElement.classList.remove('hidden')
+        submitBtn.disabled = false
+        submitBtn.innerHTML = 'Sign in'
+        return
+      }
+
+      // Redirect to dashboard on success
+      window.location.href = 'DASHBOARD.HTML'
+    } catch (err) {
+      errorElement.textContent = 'An unexpected error occurred'
+      errorElement.classList.remove('hidden')
+      submitBtn.disabled = false
+      submitBtn.innerHTML = 'Sign in'
+    }
+  })
+})
+</script>
+</body>
+</html>

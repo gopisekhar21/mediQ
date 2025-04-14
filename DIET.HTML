@@ -1,0 +1,1792 @@
+<!DOCTYPE html><html lang="en"><head></head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Medical Nutrition Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://ai-public.creatie.ai/gen_page/tailwind-custom.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    dark: {
+                        50: '#f9fafb',
+                        100: '#f3f4f6',
+                        200: '#e5e7eb',
+                        300: '#d1d5db',
+                        400: '#9ca3af',
+                        500: '#6b7280',
+                        600: '#4b5563',
+                        700: '#374151',
+                        800: '#1f2937',
+                        900: '#111827',
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="large"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+<nav class="bg-white shadow-sm">
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">C
+                <div class="flex-shrink-0 flex items-center space-x-2">
+                    <i class="fa-solid fa-hospital text-3xl text-blue-600"></i>
+                    <span class="text-lg font-semibold">Nutritional and Medical</span>
+                 </div>
+            </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                            <i class="fas fa-moon dark:hidden"></i>
+                            <i class="fas fa-sun hidden dark:block"></i>
+                        </button>
+                        <button class="!rounded-button bg-blue-600 text-white px-6 py-2.5 flex items-center space-x-2 hover:bg-blue-700 transition-colors duration-300">
+                    <i class="fas fa-notes-medical"></i>
+                    <span>Log Health Data</span>
+                </button>
+                <div class="relative">
+                    <img class="h-10 w-10 rounded-full" src="https://creatie.ai/ai/api/search-image?query=A professional headshot of a person with a friendly smile, wearing business casual attire, against a neutral background&width=80&height=80&orientation=squarish&flag=29a0a325-349e-40e6-b14d-0477c430507f&flag=08c1b242-b69c-42c6-9aab-6b0192e5209a&flag=6c9da7a4-879b-48cf-aee9-e1ae9fa80827" alt="User profile"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<main class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 mb-6 shadow-xl">
+        <div class="max-w-6xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold text-white mb-2 animate-fade-in">Medical Nutrition & Fitness Dashboard</h1>
+                            <div class="text-center py-4">
+                                <p class="text-white text-xl italic mb-2 animate-tada">"Movement is medicine for the body and mind"</p>
+                                <div class="flex flex-wrap justify-center gap-4">
+                                    <p class="text-blue-200 text-sm flex items-center">
+                                        <i class="fas fa-heartbeat mr-1"></i> Health Points
+                                    </p>
+                                    <p class="text-blue-200 text-sm flex items-center">
+                                        <i class="fas fa-utensils mr-1"></i> Nutrition Goals
+                                    </p>
+                                    <p class="text-blue-200 text-sm flex items-center">
+                                        <i class="fas fa-dumbbell mr-1"></i> Gym Progress
+                                    </p>
+                                </div>
+                            </div>
+                            <p class="text-blue-100 mb-4">Track your fitness and nutrition journey to earn rewards</p>
+                    
+<style>
+/* Enhanced animations */
+@keyframes tada {
+    0% { 
+        transform: scale(1) translateX(-50%); 
+        opacity: 0;
+    }
+    10%, 20% { transform: scale(0.9) rotate(-3deg) translateX(-50%); }
+    30%, 50%, 70%, 90% { transform: scale(1.1) rotate(3deg) translateX(-50%); }
+    40%, 60%, 80% { transform: scale(1.1) rotate(-3deg) translateX(-50%); }
+    100% { 
+        transform: scale(1) rotate(0) translateX(-50%);
+        opacity: 1;
+    }
+}
+.animate-tada {
+    position: relative;
+    left: 50%;
+    display: inline-block;
+    font-size: 1.1rem;
+    text-shadow: 0 0 8px rgba(255,255,255,0.3);
+    animation: tada 1s ease-in-out forwards;
+}
+
+/* Enhanced hover animations */
+.hover-scale {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-scale:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.button-bounce {
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.button-bounce:hover {
+    transform: translateY(-1px);
+}
+
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+.ripple-effect:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+.ripple-effect:hover:after {
+    animation: ripple 0.6s ease-out;
+}
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+.underline-animation {
+    position: relative;
+}
+.underline-animation:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+}
+.underline-animation:hover:after {
+    width: 100%;
+}
+
+.progress-fill {
+    transition: width 0.5s ease;
+}
+.progress-container:hover .progress-fill {
+    animation: pulse 1s infinite alternate;
+}
+@keyframes pulse {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
+</style>
+                </div>
+                <div class="mt-4 md:mt-0 bg-white/10 p-4 rounded-xl border border-white/20">
+                    <div class="flex items-center">
+                        <div class="bg-yellow-400/20 p-2 rounded-lg mr-3">
+                            <i class="fas fa-medal text-yellow-300 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-blue-100">Health Points</p>
+                            <p class="text-2xl font-bold text-white">1,250 <span class="text-sm font-normal">pts</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div class="bg-white/10 p-4 rounded-xl hover:scale-[1.02] transition-transform">
+                    <p class="text-sm text-blue-100">Last A1C</p>
+                    <p class="text-xl font-bold text-white">6.2%</p>
+                        <div class="w-full bg-white/20 rounded-full h-1.5 mt-2 progress-container">
+                            <div class="bg-green-400 h-1.5 rounded-full progress-fill" style="width: 75%"></div>
+                        </div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl hover:scale-[1.02] transition-transform">
+                    <p class="text-sm text-blue-100">Medication</p>
+                    <p class="text-xl font-bold text-white">Metformin</p>
+                    <div class="w-full bg-white/20 rounded-full h-1.5 mt-2">
+                        <div class="bg-blue-400 h-1.5 rounded-full" style="width: 90%"></div>
+                    </div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl hover:scale-[1.02] transition-transform">
+                    <p class="text-sm text-blue-100">Next Appointment</p>
+                    <p class="text-xl font-bold text-white">Sep 15</p>
+                    <div class="w-full bg-white/20 rounded-full h-1.5 mt-2">
+                        <div class="bg-purple-400 h-1.5 rounded-full" style="width: 60%"></div>
+                    </div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl hover:scale-[1.02] transition-transform">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="flex-1">
+                            <p class="text-sm text-blue-100">Dietitian</p>
+                            <p class="text-xl font-bold text-white">Dr. Smith</p>
+                            <div class="w-full bg-white/20 rounded-full h-1.5 mt-2">
+                                <div class="bg-cyan-400 h-1.5 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm text-blue-100">Gym Trainer</p>
+                            <p class="text-xl font-bold text-white">Coach Mike</p>
+                            <div class="w-full bg-white/20 rounded-full h-1.5 mt-2">
+                                <div class="bg-orange-400 h-1.5 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+            <!-- Enhanced Health Profile Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-0.5">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-semibold text-white">Health Profile</h2>
+                        <button class="text-sm bg-white text-blue-800 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors flex items-center">
+                            <i class="fas fa-pencil-alt mr-2"></i> Edit
+                        </button>
+                    </div>
+                </div>
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <!-- Wolf Level Card -->
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 hover-scale group">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                <p class="text-sm font-medium text-blue-800 uppercase tracking-wider">Diet Plan</p>
+                                <p class="text-2xl font-bold text-blue-900 mt-1">Diabetic</p>
+                                <p class="text-xs text-blue-600 mt-1">Low carb, high protein</p>
+                                </div>
+                                <i class="fas fa-crown text-2xl text-yellow-500"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Streak Card -->
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border border-green-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02] group">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-green-800 uppercase tracking-wider">Streak</p>
+                                    <p class="text-2xl font-bold text-green-900 mt-1">14 Days</p>
+                                    <p class="text-xs text-green-600 mt-1">Personal best: 21 days</p>
+                                </div>
+                                <i class="fas fa-fire text-2xl text-orange-500"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Hydration Card -->
+                        <div class="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-6 border border-cyan-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02] group">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-cyan-800 uppercase tracking-wider">Hydration</p>
+                                    <p class="text-2xl font-bold text-cyan-900 mt-1">1.8L / 2.5L</p>
+                                    <p class="text-xs text-cyan-600 mt-1">72% of daily goal</p>
+                                </div>
+                                <i class="fas fa-droplet text-2xl text-blue-500"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Missions Card -->
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border border-purple-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02] group">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-purple-800 uppercase tracking-wider">Daily Missions</p>
+                                    <p class="text-2xl font-bold text-purple-900 mt-1">3/5</p>
+                                    <p class="text-xs text-purple-600 mt-1">+150pts available</p>
+                                </div>
+                                <i class="fas fa-tasks text-2xl text-purple-500"></i>
+                            </div>
+                            <div class="mt-4">
+                                <div class="w-full bg-purple-200 rounded-full h-2">
+                                    <div class="bg-purple-600 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                                <p class="text-xs text-purple-700 mt-1 text-center">60% complete</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Missions Section -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-semibold">Today's Missions</h2>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm font-medium text-purple-600 flex items-center">
+                                    <i class="fas fa-coins text-yellow-500 mr-1"></i> 1,250 pts
+                                </span>
+                                <button class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                    <i class="fas fa-plus-circle mr-1"></i> Add Custom
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 flex items-center justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <p class="font-medium">Log Breakfast</p>
+                                    <p class="text-sm text-blue-600">+25pts</p>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 mission-complete" data-mission="breakfast">
+                                    <i class="far fa-circle text-xl"></i>
+                                </button>
+                            </div>
+                            <div class="bg-green-50 rounded-xl p-4 border border-green-100 flex items-center justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <p class="font-medium">30min Walk</p>
+                                    <p class="text-sm text-green-600">+50pts</p>
+                                </div>
+                                <button class="text-green-600 hover:text-green-800 mission-complete" data-mission="walk">
+                                    <i class="far fa-circle text-xl"></i>
+                                </button>
+                            </div>
+                            <div class="bg-purple-50 rounded-xl p-4 border border-purple-100 flex items-center justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <p class="font-medium">Water Goal</p>
+                                    <p class="text-sm text-purple-600">+30pts</p>
+                                </div>
+                                <button class="text-purple-600 hover:text-purple-800 mission-complete" data-mission="water">
+                                    <i class="far fa-circle text-xl"></i>
+                                </button>
+                            </div>
+                            <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-100 flex items-center justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <p class="font-medium">Medication Taken</p>
+                                    <p class="text-sm text-yellow-600">+40pts</p>
+                                </div>
+                                <button class="text-yellow-600 hover:text-yellow-800 mission-complete" data-mission="meds">
+                                    <i class="far fa-circle text-xl"></i>
+                                </button>
+                            </div>
+                            <div class="bg-red-50 rounded-xl p-4 border border-red-100 flex items-center justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <p class="font-medium">Blood Sugar Log</p>
+                                    <p class="text-sm text-red-600">+35pts</p>
+                                </div>
+                                <button class="text-red-600 hover:text-red-800 mission-complete" data-mission="glucose">
+                                    <i class="far fa-circle text-xl"></i>
+                                </button>
+                            </div>
+                            <div class="bg-indigo-50 rounded-xl p-4 border border-indigo-100 flex items-center justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <p class="font-medium">Sleep 7+ Hours</p>
+                                    <p class="text-sm text-indigo-600">+45pts</p>
+                                </div>
+                                <button class="text-indigo-600 hover:text-indigo-800 mission-complete" data-mission="sleep">
+                                    <i class="far fa-circle text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Rewards Section -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-medium mb-4 flex items-center">
+                                <i class="fas fa-gift text-purple-500 mr-2"></i>
+                                Available Rewards
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all">
+                                    <div class="flex items-start">
+                                        <div class="bg-purple-100 p-3 rounded-lg mr-3">
+                                            <i class="fas fa-mug-hot text-purple-600"></i>
+                                        </div>
+                            <div>
+                                <p class="font-medium">Coffee Treat</p>
+                                <p class="text-sm text-gray-600">200 pts</p>
+                                <button class="text-xs bg-purple-600 text-white px-3 py-1 rounded-full mt-2 hover:bg-purple-700 transition-colors button-bounce ripple-effect">
+                                    Redeem
+                                </button>
+                            </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all">
+                                    <div class="flex items-start">
+                                        <div class="bg-blue-100 p-3 rounded-lg mr-3">
+                                            <i class="fas fa-book text-blue-600"></i>
+                                        </div>
+                            <div>
+                                <p class="font-medium">New Book</p>
+                                <p class="text-sm text-gray-600">500 pts</p>
+                                <button class="text-xs bg-blue-600 text-white px-3 py-1 rounded-full mt-2 hover:bg-blue-700 transition-colors button-bounce ripple-effect">
+                                    Redeem
+                                </button>
+                            </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all">
+                                    <div class="flex items-start">
+                                        <div class="bg-green-100 p-3 rounded-lg mr-3">
+                                            <i class="fas fa-spa text-green-600"></i>
+                                        </div>
+                            <div>
+                                <p class="font-medium">Massage</p>
+                                <p class="text-sm text-gray-600">1000 pts</p>
+                                <button class="text-xs bg-green-600 text-white px-3 py-1 rounded-full mt-2 hover:bg-green-700 transition-colors button-bounce ripple-effect">
+                                    Redeem
+                                </button>
+                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health Conditions -->
+                    <div class="mt-8">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">Health Conditions</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium flex items-center hover:bg-blue-200 hover:scale-105 transition-all duration-200">
+                                <i class="fas fa-heartbeat mr-1"></i> Type 2 Diabetes
+                            </span>
+                            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium flex items-center hover:bg-purple-200 hover:scale-105 transition-all duration-200">
+                                <i class="fas fa-weight-scale mr-1"></i> Obesity
+                            </span>
+                            <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center hover:scale-105 transition-all duration-200">
+                                <i class="fas fa-plus-circle mr-1"></i> Add Condition
+                            </button>
+                        </div>
+                    </div>
+                    
+                <!-- Water Tracker -->
+                <div class="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-medium text-blue-800 flex items-center">
+                            <i class="fas fa-glass-water text-blue-500 mr-2"></i>
+                            Water Intake
+                        </h3>
+                        <span class="text-sm font-medium text-blue-600">1.8L / 2.5L</span>
+                    </div>
+                    <div class="relative h-4 bg-blue-100 rounded-full overflow-hidden">
+                        <div class="absolute top-0 left-0 h-full bg-blue-400" style="width: 72%"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-blue-600">
+                        <span>0%</span>
+                        <span>25%</span>
+                        <span>50%</span>
+                        <span>75%</span>
+                        <span>100%</span>
+                    </div>
+                    <div class="grid grid-cols-5 gap-2 mt-4">
+                        <button class="water-cup bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-glass-water"></i> 250ml
+                        </button>
+                        <button class="water-cup bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-glass-water"></i> 250ml
+                        </button>
+                        <button class="water-cup bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-glass-water"></i> 250ml
+                        </button>
+                        <button class="water-cup bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-glass-water"></i> 250ml
+                        </button>
+                        <button class="water-cup bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-glass-water"></i> 250ml
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Health Summary -->
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Health Summary</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 hover:shadow-sm transition-all duration-300">
+                                <p class="text-sm font-medium text-gray-500">Last Checkup</p>
+                                <p class="text-lg font-semibold mt-1">June 15, 2023</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 hover:shadow-sm transition-all duration-300">
+                                <p class="text-sm font-medium text-gray-500">Next Appointment</p>
+                                <p class="text-lg font-semibold mt-1">September 2, 2023</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Health Dashboard -->
+            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold">Health Dashboard</h2>
+                    <div class="flex space-x-2">
+                        <button class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-3 py-1 rounded-full transition-colors">
+                            <i class="fas fa-calendar-alt mr-1"></i> Weekly
+                        </button>
+                        <button class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-full transition-colors">
+                            <i class="fas fa-chart-line mr-1"></i> Trends
+                        </button>
+                        <button class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-full transition-colors">
+                            <i class="fas fa-plus mr-1"></i> Add Metric
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Primary Health Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Blood Sugar Card -->
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-100 hover:shadow-md transition-all">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-medium text-blue-800 flex items-center">
+                                    <i class="fas fa-heartbeat mr-1"></i> Blood Sugar
+                                </h4>
+                                <p class="text-2xl font-bold mt-1">98 <span class="text-sm font-normal">mg/dL</span></p>
+                            </div>
+                            <div class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full flex items-center">
+                                <i class="fas fa-arrow-down mr-1"></i> 2%
+                            </div>
+                        </div>
+                        <div class="h-48 mt-4">
+                            <p class="text-xs font-medium text-blue-700 mb-1">7-Day Blood Sugar Trend</p>
+                            <canvas id="bloodSugarChart"></canvas>
+                        </div>
+                        <div class="flex justify-between text-xs text-blue-600 mt-2">
+                            <span>Last 7 days</span>
+                            <span>In range: 92%</span>
+                        </div>
+                        <button class="w-full mt-2 text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-plus mr-1"></i> Log Reading
+                        </button>
+                    </div>
+
+                    <!-- Blood Pressure Card -->
+                    <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 border border-red-100 hover:shadow-md transition-all">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-medium text-red-800 flex items-center">
+                                    <i class="fas fa-heart-pulse mr-1"></i> Blood Pressure
+                                </h4>
+                                <p class="text-2xl font-bold mt-1">120/80</p>
+                            </div>
+                            <div class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                                Normal
+                            </div>
+                        </div>
+                        <div class="h-48 mt-4">
+                            <p class="text-xs font-medium text-red-700 mb-1">Blood Pressure History</p>
+                            <canvas id="bloodPressureChart"></canvas>
+                        </div>
+                        <div class="flex justify-between text-xs text-red-600 mt-2">
+                            <span>Morning avg</span>
+                            <span>Evening avg</span>
+                        </div>
+                        <button class="w-full mt-2 text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition-colors">
+                            <i class="fas fa-plus mr-1"></i> Log Reading
+                        </button>
+                    </div>
+
+                    <!-- Weight Card -->
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-100 hover:shadow-md transition-all">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-medium text-green-800 flex items-center">
+                                    <i class="fas fa-weight-scale mr-1"></i> Weight
+                                </h4>
+                                <p class="text-2xl font-bold mt-1">68.5 <span class="text-sm font-normal">kg</span></p>
+                            </div>
+                            <div class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center">
+                                <i class="fas fa-arrow-down mr-1"></i> 1.7kg
+                            </div>
+                        </div>
+                        <div class="h-48 mt-4">
+                            <p class="text-xs font-medium text-green-700 mb-1">30-Day Weight Trend</p>
+                            <canvas id="weightChart"></canvas>
+                        </div>
+                        <div class="flex justify-between text-xs text-green-600 mt-2">
+                            <span>30 day trend</span>
+                            <span>Goal: 65kg</span>
+                        </div>
+                        <button class="w-full mt-2 text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition-colors">
+                            <i class="fas fa-plus mr-1"></i> Log Weight
+                        </button>
+                    </div>
+
+                    <!-- Activity Card -->
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-100 hover:shadow-md transition-all">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-medium text-purple-800 flex items-center">
+                                    <i class="fas fa-walking mr-1"></i> Activity
+                                </h4>
+                                <p class="text-2xl font-bold mt-1">8,250 <span class="text-sm font-normal">steps</span></p>
+                            </div>
+                            <div class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                72% of goal
+                            </div>
+                        </div>
+                        <div class="h-48 mt-4">
+                            <p class="text-xs font-medium text-purple-700 mb-1">Daily Activity Breakdown</p>
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                        <div class="flex justify-between text-xs text-purple-600 mt-2">
+                            <span>Calories: 420</span>
+                            <span>Active: 45min</span>
+                        </div>
+                        <button class="w-full mt-2 text-xs bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700 transition-colors">
+                            <i class="fas fa-plus mr-1"></i> Log Activity
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Secondary Health Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-white rounded-lg p-3 border border-gray-100 flex items-center hover:shadow-sm transition-all">
+                        <div class="bg-blue-50 p-2 rounded-lg mr-3">
+                            <i class="fas fa-bed text-blue-500"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500">Sleep</p>
+                            <p class="font-medium">7h 22m <span class="text-xs text-gray-400">(85% quality)</span></p>
+                            <div class="w-full bg-gray-200 rounded-full h-1 mt-1">
+                                <div class="bg-blue-400 h-1 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-3 border border-gray-100 flex items-center hover:shadow-sm transition-all">
+                        <div class="bg-green-50 p-2 rounded-lg mr-3">
+                            <i class="fas fa-glass-water text-green-500"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500">Hydration</p>
+                            <p class="font-medium">1.8L <span class="text-xs text-gray-400">/2.5L</span></p>
+                            <div class="w-full bg-gray-200 rounded-full h-1 mt-1">
+                                <div class="bg-green-400 h-1 rounded-full" style="width: 72%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-3 border border-gray-100 flex items-center hover:shadow-sm transition-all">
+                        <div class="bg-yellow-50 p-2 rounded-lg mr-3">
+                            <i class="fas fa-heart-pulse text-yellow-500"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500">Resting HR</p>
+                            <p class="font-medium">62 <span class="text-xs text-gray-400">bpm</span></p>
+                            <div class="w-full bg-gray-200 rounded-full h-1 mt-1">
+                                <div class="bg-yellow-400 h-1 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Insights Section -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                        Health Insights
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4 hover:shadow-sm transition-all">
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-arrow-trend-down text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Blood Sugar Improvement</p>
+                                    <p class="text-sm text-gray-600">Your average blood sugar has decreased by 2% over the past week. Keep up the good work!</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4 hover:shadow-sm transition-all">
+                            <div class="flex items-start">
+                                <div class="bg-green-100 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-dumbbell text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Activity Goal</p>
+                                    <p class="text-sm text-gray-600">You're on track to meet your weekly activity goal. Just 1,750 more steps today!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+           
+            <div class="grid grid-cols-1">
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold">Today's Meal Plan</h2>
+                    <div class="flex space-x-2">
+                        <button class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-3 py-1 rounded-full transition-colors">
+                            <i class="fas fa-calendar-alt mr-1"></i> Weekly View
+                        </button>
+                        <button class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-full transition-colors">
+                            <i class="fas fa-utensils mr-1"></i> Add Meal
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Breakfast -->
+                    <div class="border border-gray-100 rounded-xl p-6 hover:shadow-md transition-all duration-300 bg-gradient-to-r from-green-50 to-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="bg-green-100 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-sun text-green-600"></i>
+                                </div>
+                                <h3 class="text-lg font-medium">Breakfast</h3>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
+                                <i class="fas fa-check-circle mr-1"></i> Completed
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="font-medium text-gray-800">Oatmeal with Berries</p>
+                                <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2">
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-fire text-red-400 mr-1"></i> 320 cal
+                                    </span>
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-dumbbell text-blue-400 mr-1"></i> 12g protein
+                                    </span>
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-bread-slice text-yellow-400 mr-1"></i> 45g carbs
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" alt="Oatmeal" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-end space-x-2">
+                                <button class="text-xs bg-white border border-indigo-200 text-indigo-600 px-3 py-1.5 rounded-full hover:bg-indigo-50 transition-colors">
+                                    <i class="fas fa-utensils mr-1"></i> Recipe
+                                </button>
+                                <button class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-full hover:bg-indigo-700 transition-colors">
+                                    <i class="fas fa-repeat mr-1"></i> Swap
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lunch -->
+                    <div class="border border-gray-100 rounded-xl p-6 hover:shadow-md transition-all duration-300 bg-gradient-to-r from-yellow-50 to-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="bg-yellow-100 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-sun text-yellow-600"></i>
+                                </div>
+                                <h3 class="text-lg font-medium">Lunch</h3>
+                            </div>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
+                                <i class="fas fa-clock mr-1"></i> Current
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="font-medium text-gray-800">Grilled Chicken Salad</p>
+                                <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2">
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-fire text-red-400 mr-1"></i> 420 cal
+                                    </span>
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-dumbbell text-blue-400 mr-1"></i> 35g protein
+                                    </span>
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-bread-slice text-yellow-400 mr-1"></i> 15g carbs
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c" alt="Salad" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-end space-x-2">
+                                <button class="text-xs bg-white border border-indigo-200 text-indigo-600 px-3 py-1.5 rounded-full hover:bg-indigo-50 transition-colors">
+                                    <i class="fas fa-utensils mr-1"></i> Recipe
+                                </button>
+                                <button class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-full hover:bg-indigo-700 transition-colors">
+                                    <i class="fas fa-repeat mr-1"></i> Swap
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dinner -->
+                    <div class="border border-gray-100 rounded-xl p-6 hover:shadow-md transition-all duration-300 bg-gradient-to-r from-blue-50 to-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-moon text-blue-600"></i>
+                                </div>
+                                <h3 class="text-lg font-medium">Dinner</h3>
+                            </div>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
+                                <i class="fas fa-clock mr-1"></i> Upcoming
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="font-medium text-gray-800">Salmon with Quinoa</p>
+                                <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2">
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-fire text-red-400 mr-1"></i> 520 cal
+                                    </span>
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-dumbbell text-blue-400 mr-1"></i> 40g protein
+                                    </span>
+                                    <span class="text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-bread-slice text-yellow-400 mr-1"></i> 35g carbs
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2" alt="Salmon" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-end space-x-2">
+                                <button class="text-xs bg-white border border-indigo-200 text-indigo-600 px-3 py-1.5 rounded-full hover:bg-indigo-50 transition-colors">
+                                    <i class="fas fa-utensils mr-1"></i> Recipe
+                                </button>
+                                <button class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-full hover:bg-indigo-700 transition-colors">
+                                    <i class="fas fa-repeat mr-1"></i> Swap
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Summary -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-lg font-medium mb-4">Daily Nutrition Summary</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <p class="text-sm text-gray-500">Total Calories</p>
+                            <p class="text-2xl font-bold">1,260<span class="text-sm font-normal text-gray-500">/2,000</span></p>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                                <div class="bg-red-400 h-1.5 rounded-full" style="width: 63%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <p class="text-sm text-gray-500">Protein</p>
+                            <p class="text-2xl font-bold">87g<span class="text-sm font-normal text-gray-500">/120g</span></p>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                                <div class="bg-blue-400 h-1.5 rounded-full" style="width: 72%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <p class="text-sm text-gray-500">Carbs</p>
+                            <p class="text-2xl font-bold">95g<span class="text-sm font-normal text-gray-500">/200g</span></p>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                                <div class="bg-yellow-400 h-1.5 rounded-full" style="width: 47%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <p class="text-sm text-gray-500">Fiber</p>
+                            <p class="text-2xl font-bold">18g<span class="text-sm font-normal text-gray-500">/30g</span></p>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                                <div class="bg-green-400 h-1.5 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+                </div>
+                
+                <!-- Enhanced Sidebar Content -->
+                <div class="space-y-8 w-full">
+                    <!-- Premium Today's Meal Plan -->
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 mb-10 overflow-hidden border border-gray-200">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-50 to-indigo-50 opacity-20 -z-10"></div>
+                        <div class="flex justify-between items-center mb-8">
+                            <div>
+                                <h3 class="text-3xl font-bold text-gray-800">Weekly Meal Plan</h3>
+                                <p class="text-gray-500">September 10-16, 2023</p>
+                            </div>
+                            <div class="flex space-x-4">
+                                <button class="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-5 py-3 rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Add Meal</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-6">
+                            <!-- Monday -->
+                            <div class="day-card">
+                                <div class="day-header">
+                                    <h4 class="day-title">Monday</h4>
+                                    <span class="day-calories">1,420 cal</span>
+                                </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-4">
+                                    <div class="meal-card bg-purple-50">
+                                        <div class="meal-icon">
+                                            <i class="fas fa-sun text-purple-500"></i>
+                                        </div>
+                                        <h5>Breakfast</h5>
+                                        <p class="meal-name">Oatmeal with Berries</p>
+                                        <p class="meal-details">320 cal • 12g protein</p>
+                                    </div>
+                                    <div class="meal-card bg-blue-50">
+                                        <div class="meal-icon">
+                                            <i class="fas fa-sun text-blue-500"></i>
+                                        </div>
+                                        <h5>Lunch</h5>
+                                        <p class="meal-name">Grilled Chicken Salad</p>
+                                        <p class="meal-details">420 cal • 35g protein</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="meal-card bg-green-50">
+                                        <div class="meal-icon">
+                                            <i class="fas fa-moon text-green-500"></i>
+                                        </div>
+                                        <h5>Dinner</h5>
+                                        <p class="meal-name">Salmon & Vegetables</p>
+                                        <p class="meal-details">520 cal • 40g protein</p>
+                                    </div>
+                                    <div class="meal-card bg-yellow-50">
+                                        <div class="meal-icon">
+                                            <i class="fas fa-utensils text-yellow-500"></i>
+                                        </div>
+                                        <h5>Snacks</h5>
+                                        <p class="meal-name">Almonds & Yogurt</p>
+                                        <p class="meal-details">160 cal • 6g protein</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="flex justify-center mt-8">
+                            <button class="flex items-center space-x-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 transform">
+                                <i class="fas fa-plus-circle text-lg"></i>
+                                <span class="font-medium">Add Custom Meal</span>
+                            </button>
+                        </div>
+
+                        <style>
+                            .day-card {
+                                background: white;
+                                border-radius: 20px;
+                                padding: 30px;
+                                box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+                                position: relative;
+                                overflow: hidden;
+                            }
+                            .meal-card {
+                                padding: 20px;
+                                border-radius: 16px;
+                                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                                position: relative;
+                            }
+                            .meal-card:hover {
+                                transform: translateY(-5px);
+                                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                            }
+                            .meal-card::after {
+                                content: '';
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                height: 4px;
+                                background: linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to));
+                                opacity: 0;
+                                transition: opacity 0.3s ease;
+                            }
+                            .meal-card:hover::after {
+                                opacity: 1;
+                            }
+                            .meal-icon {
+                                width: 48px;
+                                height: 48px;
+                                border-radius: 14px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin-right: 16px;
+                                flex-shrink: 0;
+                                font-size: 1.25rem;
+                                transition: all 0.3s ease;
+                            }
+                            .meal-card:hover .meal-icon {
+                                transform: scale(1.1);
+                            }
+                            .meal-name {
+                                font-weight: 600;
+                                margin: 4px 0;
+                                color: #111827;
+                                font-size: 1.1rem;
+                            }
+                            .meal-details {
+                                font-size: 0.85rem;
+                                color: #6b7280;
+                                line-height: 1.5;
+                            }
+                        </style>
+                    </div>
+
+
+                    <!-- Daily Summary Card -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+                            Daily Nutrition Summary
+                        </h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-indigo-50 p-3 rounded-lg text-center">
+                                <p class="text-sm text-indigo-600">Calories</p>
+                                <p class="text-xl font-bold">1,260<span class="text-sm font-normal text-gray-500">/2,000</span></p>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                                    <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 63%"></div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                <p class="text-sm text-blue-600">Fat</p>
+                                <p class="text-xl font-bold">42g</p>
+                            </div>
+                            <div class="bg-purple-50 p-3 rounded-lg text-center">
+                                <p class="text-sm text-purple-600">Sugar</p>
+                                <p class="text-xl font-bold">18g</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Recipe Finder -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 h-[380px] flex flex-col mb-8 border border-gray-200">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-search text-red-500 mr-2"></i>
+                            Find Recipes
+                        </h3>
+                        <div class="flex mb-4">
+                            <input type="text" placeholder="Search recipes..." class="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-300">
+                            <button class="bg-red-500 text-white px-4 py-2 rounded-r-lg hover:bg-red-600 transition-colors">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button class="text-xs bg-red-100 hover:bg-red-200 text-red-800 px-3 py-1 rounded-full transition-colors">Low-Carb</button>
+                            <button class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded-full transition-colors">High-Protein</button>
+                            <button class="text-xs bg-green-100 hover:bg-green-200 text-green-800 px-3 py-1 rounded-full transition-colors">Diabetic</button>
+                            <button class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-800 px-3 py-1 rounded-full transition-colors">Vegetarian</button>
+                            <button class="text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full transition-colors">Quick Meals</button>
+                            <button class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-3 py-1 rounded-full transition-colors">High-Fiber</button>
+                        </div>
+                        <div class="overflow-y-auto flex-1">
+                            <div class="grid grid-cols-1 gap-3">
+                                <div class="border rounded-lg p-3 hover:shadow-md cursor-pointer flex">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden mr-3 flex-shrink-0">
+                                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c" class="w-full h-full object-cover transition-transform hover:scale-105">
+                                </div>
+                                    <div>
+                                        <p class="font-medium">Grilled Chicken Salad</p>
+                                        <p class="text-sm text-gray-600">420 cal | 35g protein | 15g carbs</p>
+                                        <div class="flex mt-1">
+                                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded mr-1">Easy</span>
+                                            <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">25min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="border rounded-lg p-3 hover:shadow-md cursor-pointer flex">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden mr-3 flex-shrink-0">
+                                    <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2" class="w-full h-full object-cover transition-transform hover:scale-105">
+                                </div>
+                                    <div>
+                                        <p class="font-medium">Baked Salmon</p>
+                                        <p class="text-sm text-gray-600">520 cal | 40g protein | 35g carbs</p>
+                                        <div class="flex mt-1">
+                                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded mr-1">Medium</span>
+                                            <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">35min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="border rounded-lg p-3 hover:shadow-md cursor-pointer flex">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden mr-3 flex-shrink-0">
+                                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" class="w-full h-full object-cover transition-transform hover:scale-105">
+                                </div>
+                                    <div>
+                                        <p class="font-medium">Oatmeal Bowl</p>
+                                        <p class="text-sm text-gray-600">320 cal | 12g protein | 45g carbs</p>
+                                        <div class="flex mt-1">
+                                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded mr-1">Easy</span>
+                                            <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">10min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Enhanced Wolf Wisdom -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 border-4 border-indigo-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold flex items-center text-indigo-800">
+                                <i class="fas fa-paw text-indigo-600 mr-3"></i>
+                                Wolf Wisdom
+                            </h2>
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-bold">Alpha Pack</span>
+                        </div>
+                        
+                        <div class="space-y-5">
+                            <div class="bg-white/80 p-4 rounded-lg border border-indigo-100 hover:scale-[1.02] transition-transform">
+                                <div class="flex items-start">
+                                    <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                                        <i class="fas fa-tint text-indigo-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-indigo-900">Hydration Hunt</h3>
+                                        <p class="text-sm text-gray-700 mt-1">"The wolf thrives near water - drink 2L daily to maintain peak performance"</p>
+                                        <div class="flex items-center mt-2 text-xs text-indigo-600">
+                                            <i class="fas fa-bolt mr-1"></i> +25 Health Points
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white/80 p-4 rounded-lg border border-blue-100 hover:scale-[1.02] transition-transform">
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                                        <i class="fas fa-dumbbell text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-blue-900">Pack Movement</h3>
+                                        <p class="text-sm text-gray-700 mt-1">"A wolf covers 30 miles daily - aim for 10,000 steps to stay strong"</p>
+                                        <div class="flex items-center mt-2 text-xs text-blue-600">
+                                            <i class="fas fa-bolt mr-1"></i> +50 Health Points
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white/80 p-4 rounded-lg border border-purple-100 hover:scale-[1.02] transition-transform">
+                                <div class="flex items-start">
+                                    <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                                        <i class="fas fa-moon text-purple-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-purple-900">Moonlight Recovery</h3>
+                                        <p class="text-sm text-gray-700 mt-1">"Wolves sleep 8 hours - prioritize rest for optimal health"</p>
+                                        <div class="flex items-center mt-2 text-xs text-purple-600">
+                                            <i class="fas fa-bolt mr-1"></i> +40 Health Points
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full mt-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl font-bold hover:from-indigo-700 hover:to-blue-700 transition-all flex items-center justify-center">
+                            <i class="fas fa-plus-circle mr-2"></i> Join the Pack Hunt
+                        </button>
+                    </div>
+
+                    <!-- Enhanced Wolf Goals -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-xl p-6 border-4 border-blue-300 hover:shadow-2xl transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold flex items-center text-blue-800">
+                                <img src="https://creatie.ai/ai/api/search-image?query=A+minimalist+wolf+head+logo+with+geometric+design&width=28&height=28&orientation=squarish" alt="Wolf Logo" class="w-7 h-7 mr-3">
+                                Wolf Hunt Goals
+                            </h2>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Alpha Rank</span>
+                        </div>
+                        
+                        <!-- Daily Hunt -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-blue-800 flex items-center">
+                                    <i class="fas fa-paw-prints text-blue-600 mr-2"></i>
+                                    Daily Hunt (85/100 pts)
+                                </h3>
+                                <span class="text-sm font-bold text-blue-600">3/5 Targets</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm">Hydration (2L)</span>
+                                        <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">+15 pts</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm">Territory Patrol (10k steps)</span>
+                                        <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">+20 pts</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-green-600 h-2.5 rounded-full" style="width: 82%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm">Prey Capture (Meals)</span>
+                                        <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">+30 pts</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-purple-600 h-2.5 rounded-full" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Moon Cycle (Monthly) -->
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-indigo-800 flex items-center">
+                                    <i class="fas fa-moon text-indigo-600 mr-2"></i>
+                                    Moon Cycle (1,250/3,000 pts)
+                                </h3>
+                                <span class="text-sm font-bold text-indigo-600">42% Complete</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm">Pack Loyalty (Streak)</span>
+                                        <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">+500 pts</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-red-600 h-2.5 rounded-full" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm">Alpha Strength (Weight)</span>
+                                        <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">+300 pts</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-yellow-600 h-2.5 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 bg-indigo-100/50 border border-indigo-200 rounded-lg p-3 text-center">
+                                <p class="text-sm font-medium text-indigo-800">Next Reward at 2,000 pts: <span class="font-bold">Moonlight Badge</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-md transition-all duration-300 border-2 border-gray-200 mt-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold">Nearby Gyms</h2>
+                    <div class="flex space-x-2">
+                        <button id="gymsBtn2" class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full transition-colors">
+                            <i class="fas fa-dumbbell mr-1"></i> Gyms
+                        </button>
+                        <button id="fitnessBtn" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-full transition-colors">
+                            <i class="fas fa-person-walking mr-1"></i> Fitness
+                        </button>
+                    </div>
+                </div>
+                <div id="gymsMap" class="h-64 rounded-lg overflow-hidden bg-gray-100"></div>
+                <div class="mt-4 flex justify-between text-sm">
+                    <div class="flex items-center text-gray-600">
+                        <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                        <span>Gyms (4)</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                        <span>Fitness Centers (2)</span>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize gyms map centered on Kompally
+                    const gymsMap = L.map('gymsMap').setView([17.5519, 78.5556], 14);
+                    
+                    // Add OpenStreetMap tiles
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(gymsMap);
+
+                    // Custom icons
+                    const gymIcon = L.divIcon({
+                        className: 'gym-icon',
+                        html: '<div style="background-color:green;border-radius:50%;width:20px;height:20px;"></div>',
+                        iconSize: [20, 20]
+                    });
+                    
+                    const fitnessIcon = L.divIcon({
+                        className: 'fitness-icon',
+                        html: '<div style="background-color:purple;border-radius:50%;width:20px;height:20px;"></div>',
+                        iconSize: [20, 20]
+                    });
+
+                    // Gym markers with detailed info
+                    const gyms = [
+                        { 
+                            latlng: [17.5505, 78.5545], 
+                            title: 'Fitness First Gym',
+                            address: '12-34, Kompally Main Road',
+                            phone: '040 1234 5678',
+                            hours: '6AM-10PM Daily'
+                        },
+                        { 
+                            latlng: [17.5520, 78.5570], 
+                            title: 'Gold\'s Gym Kompally',
+                            address: 'Kompally Plaza, 2nd Floor',
+                            phone: '040 2345 6789',
+                            hours: '5AM-11PM Daily'
+                        },
+                        { 
+                            latlng: [17.5535, 78.5535], 
+                            title: 'Anytime Fitness',
+                            address: 'Near Kompally Circle',
+                            phone: '040 3456 7890',
+                            hours: '24/7 Access'
+                        },
+                        { 
+                            latlng: [17.5500, 78.5580], 
+                            title: 'Snap Fitness',
+                            address: 'Opposite Kompally Metro',
+                            phone: '040 4567 8901',
+                            hours: '5AM-11PM Daily'
+                        }
+                    ];
+
+                    // Fitness center markers with detailed info
+                    const fitnessCenters = [
+                        { 
+                            latlng: [17.5515, 78.5565], 
+                            title: 'Yoga Center',
+                            address: 'Peace Lane, Kompally',
+                            phone: '040 5678 9012',
+                            hours: '7AM-8PM, Closed Sundays'
+                        },
+                        { 
+                            latlng: [17.5525, 78.5555], 
+                            title: 'Pilates Studio',
+                            address: 'Kompally Health Hub',
+                            phone: '040 6789 0123',
+                            hours: '8AM-7PM Daily'
+                        }
+                    ];
+
+                    let activeGymMarkers = [];
+                    
+                    // Function to show markers
+                    function showGymMarkers(locations, icon) {
+                        // Clear existing markers
+                        activeGymMarkers.forEach(marker => gymsMap.removeLayer(marker));
+                        activeGymMarkers = [];
+                        
+                        // Add new markers
+                        locations.forEach(location => {
+                            const marker = L.marker(location.latlng, {
+                                icon: icon,
+                                title: location.title
+                            }).addTo(gymsMap);
+                            marker.bindPopup(`
+                                <div class="map-popup">
+                                    <h3 class="font-bold text-lg">${location.title}</h3>
+                                    <p class="text-gray-600 mt-1">
+                                        <i class="fas fa-map-marker-alt mr-1"></i> ${location.address}
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <i class="fas fa-phone mr-1"></i> ${location.phone}
+                                    </p>
+                                    <p class="text-gray-600">
+                                        <i class="fas fa-clock mr-1"></i> ${location.hours}
+                                    </p>
+                                </div>
+                            `);
+                            activeGymMarkers.push(marker);
+                        });
+                    }
+
+                    // Button event listeners
+                    document.getElementById('gymsBtn2').addEventListener('click', function() {
+                        showGymMarkers(gyms, gymIcon);
+                    });
+
+                    document.getElementById('fitnessBtn').addEventListener('click', function() {
+                        showGymMarkers(fitnessCenters, fitnessIcon);
+                    });
+
+                    // Show gyms by default
+                    showGymMarkers(gyms, gymIcon);
+                });
+            </script>
+                <!-- Nearby Locations Map -->
+                <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-md transition-all duration-300 border border-gray-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold">Nearby Health Locations</h2>
+                        <div class="flex space-x-2">
+                            <button id="medicalBtn" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors">
+                                <i class="fas fa-clinic-medical mr-1"></i> Medical
+                            </button>
+                            <button id="gymsBtn" class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full transition-colors">
+                                <i class="fas fa-dumbbell mr-1"></i> Gyms
+                            </button>
+                        </div>
+                    </div>
+                    <div id="map" class="h-64 rounded-lg overflow-hidden bg-gray-100"></div>
+                    <div class="mt-4 flex justify-between text-sm">
+                        <div class="flex items-center text-gray-600">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                            <span>Medical Shops (3)</span>
+                        </div>
+                        <div class="flex items-center text-gray-600">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                            <span>Gyms (2)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaflet CSS -->
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+                    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+                    crossorigin=""/>
+                
+                <!-- Leaflet JS -->
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                    crossorigin=""></script>
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Initialize map centered on Kompally
+                        const map = L.map('map').setView([17.5519, 78.5556], 14);
+                        
+                        // Add OpenStreetMap tiles
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+
+                        // Custom icons
+                        const medicalIcon = L.divIcon({
+                            className: 'medical-icon',
+                            html: '<div style="background-color:blue;border-radius:50%;width:20px;height:20px;"></div>',
+                            iconSize: [20, 20]
+                        });
+                        
+                        const gymIcon = L.divIcon({
+                            className: 'gym-icon',
+                            html: '<div style="background-color:green;border-radius:50%;width:20px;height:20px;"></div>',
+                            iconSize: [20, 20]
+                        });
+
+                        // Medical shop markers
+                        const medicalShops = [
+                            { latlng: [17.5525, 78.5550], title: 'MedPlus Medicals' },
+                            { latlng: [17.5510, 78.5560], title: 'Apollo Pharmacy' },
+                            { latlng: [17.5530, 78.5540], title: 'Kompally Medicals' }
+                        ];
+
+                        // Gym markers
+                        const gyms = [
+                            { latlng: [17.5505, 78.5545], title: 'Fitness First Gym' },
+                            { latlng: [17.5520, 78.5570], title: 'Gold\'s Gym Kompally' }
+                        ];
+
+                        let activeMarkers = [];
+                        
+                        // Function to show markers
+                        function showMarkers(locations, icon) {
+                            // Clear existing markers
+                            activeMarkers.forEach(marker => map.removeLayer(marker));
+                            activeMarkers = [];
+                            
+                            // Add new markers
+                            locations.forEach(location => {
+                                const marker = L.marker(location.latlng, {
+                                    icon: icon,
+                                    title: location.title
+                                }).addTo(map);
+                                marker.bindPopup(location.title);
+                                activeMarkers.push(marker);
+                            });
+                        }
+
+                        // Button event listeners
+                        document.getElementById('medicalBtn').addEventListener('click', function() {
+                            showMarkers(medicalShops, medicalIcon);
+                        });
+
+                        document.getElementById('gymsBtn').addEventListener('click', function() {
+                            showMarkers(gyms, gymIcon);
+                        });
+
+                        // Show medical shops by default
+                        showMarkers(medicalShops, medicalIcon);
+                    });
+                </script>
+
+            </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<!-- Add this script for map functionality -->
+<script>
+    // This would be replaced with actual map implementation code
+    document.addEventListener('DOMContentLoaded', function() {
+        const medicalBtn = document.querySelector('button:has(.fa-clinic-medical)');
+        const gymsBtn = document.querySelector('button:has(.fa-dumbbell)');
+        
+        medicalBtn.addEventListener('click', function() {
+            // Would filter to show medical locations
+            console.log('Showing medical shops');
+        });
+        
+        gymsBtn.addEventListener('click', function() {
+            // Would filter to show gym locations
+            console.log('Showing gyms');
+        });
+    });
+</script>
+<footer class="bg-white border-t mt-12">
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="text-center">
+            <p class="text-gray-500">&#34;In the rhythm of nature, find your strength. In the spirit of the wolf, find your discipline.&#34;</p>
+        </div>
+    </div>
+</footer>
+<!-- Add Chart.js -->
+<style>
+    @keyframes motivationalRise {
+        0% { 
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+        }
+        50% {
+            opacity: 0.8;
+            transform: translateY(-5px) scale(1.05);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            text-shadow: 0 0 20px rgba(255,255,255,0.8);
+        }
+    }
+    .animate-fade-in {
+        animation: motivationalRise 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    }
+</style>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Initialize all functionality when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            const currentTheme = localStorage.getItem('theme');
+            
+            if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+        }
+
+        // Water tracking functionality
+        const waterTracker = {
+            currentIntake: 1800, // ml
+            goal: 2500, // ml
+            cups: document.querySelectorAll('.water-cup'),
+            progressBar: document.querySelector('.bg-blue-400'),
+            amountDisplay: document.querySelector('.text-blue-600'),
+            
+            init() {
+                this.cups.forEach(cup => {
+                    cup.addEventListener('click', () => this.addWater(250));
+                });
+                this.updateDisplay();
+            },
+            
+            addWater(amount) {
+                this.currentIntake = Math.min(this.currentIntake + amount, this.goal);
+                this.updateDisplay();
+                
+                // Add points if goal reached
+                if (this.currentIntake >= this.goal) {
+                    this.addPoints(30);
+                }
+            },
+            
+            updateDisplay() {
+                const percent = Math.min(100, (this.currentIntake / this.goal) * 100);
+                this.progressBar.style.width = `${percent}%`;
+                this.amountDisplay.textContent = `${(this.currentIntake/1000).toFixed(1)}L / ${(this.goal/1000).toFixed(1)}L`;
+                
+                // Save to localStorage
+                localStorage.setItem('waterIntake', this.currentIntake);
+            },
+            
+            addPoints(points) {
+                // In a real app, this would update via API
+                console.log(`Added ${points} points for water goal`);
+            }
+        };
+
+        // Initialize water tracker
+        const savedIntake = localStorage.getItem('waterIntake');
+        if (savedIntake) {
+            waterTracker.currentIntake = parseInt(savedIntake);
+        }
+        waterTracker.init();
+
+        // Mission completion functionality
+        document.querySelectorAll('.mission-complete').forEach(button => {
+            button.addEventListener('click', function() {
+                const mission = this.getAttribute('data-mission');
+                this.innerHTML = '<i class="fas fa-check-circle text-xl"></i>';
+                this.classList.remove('text-blue-600', 'text-green-600', 'text-purple-600', 'text-yellow-600', 'text-red-600', 'text-indigo-600');
+                this.classList.add('text-gray-600');
+                
+                // Add animation
+                this.parentElement.classList.add('bg-opacity-50');
+                setTimeout(() => {
+                    this.parentElement.classList.add('line-through', 'text-gray-400');
+                }, 300);
+                
+                // In a real app, you would update points via API here
+                console.log(`Mission completed: ${mission}`);
+            });
+        });
+
+        // Initialize Chart.js charts
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: false } }
+        };
+
+        // Blood Sugar Chart
+        new Chart(document.getElementById('bloodSugarChart'), {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    data: [102, 99, 98, 97, 96, 98, 95],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Blood Pressure Chart
+        new Chart(document.getElementById('bloodPressureChart'), {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    {
+                        data: [122, 120, 118, 119, 120, 121, 120],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.4
+                    },
+                    {
+                        data: [82, 80, 78, 79, 80, 81, 80],
+                        borderColor: '#f87171',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: chartOptions
+        });
+
+        // Weight Chart
+        new Chart(document.getElementById('weightChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 30}, (_, i) => i+1),
+                datasets: [{
+                    data: Array.from({length: 30}, (_, i) => 70 - (i * 0.05)),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Activity Chart
+        new Chart(document.getElementById('activityChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Steps', 'Active', 'Calories'],
+                datasets: [{
+                    data: [8250, 45, 420],
+                    backgroundColor: [
+                        'rgba(168, 85, 247, 0.7)',
+                        'rgba(192, 132, 252, 0.7)',
+                        'rgba(216, 180, 254, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(168, 85, 247, 1)',
+                        'rgba(192, 132, 252, 1)',
+                        'rgba(216, 180, 254, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Map functionality
+        const setupMap = () => {
+            const mapContainer = document.createElement('div');
+            mapContainer.id = 'kompally-map';
+            mapContainer.style.height = '500px'; // Increased vertical size
+            mapContainer.style.width = '100%';
+            mapContainer.style.marginTop = '20px';
+            mapContainer.style.display = 'none';
+            
+            // Static Google Maps embed for Kompally
+            mapContainer.innerHTML = `
+                <iframe 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    style="border:0"
+                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD9l4VfJdX6V1T3X9Qk2Y6Z6Qw6Z6Qw6Z6&q=Kompally,Hyderabad" 
+                    allowfullscreen>
+                </iframe>
+            `;
+            
+            document.body.appendChild(mapContainer);
+
+            const medicalBtn = document.querySelector('button:has(.fa-clinic-medical)');
+            const gymsBtn = document.querySelector('button:has(.fa-dumbbell)');
+            
+            const toggleMap = () => {
+                mapContainer.style.display = mapContainer.style.display === 'none' ? 'block' : 'none';
+            };
+            
+            if (medicalBtn) {
+                medicalBtn.addEventListener('click', () => {
+                    toggleMap();
+                    console.log('Showing medical shops in Kompally');
+                });
+            }
+            
+            if (gymsBtn) {
+                gymsBtn.addEventListener('click', () => {
+                    toggleMap();
+                    console.log('Showing gyms in Kompally');
+                });
+            }
+        };
+        setupMap();
+    });
+</script>

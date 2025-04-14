@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile | Medical Care</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://ai-public.creatie.ai/gen_page/tailwind-custom.css" rel="stylesheet">
+    <script
+        src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000"
+        data-border-radius="large"></script>
+</head>
+
+<body class="bg-gray-50 font-[Poppins]">
+
+    <!-- Floating Appointment Button -->
+    <div class="fixed bottom-8 right-8 z-40">
+        <button class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-110 animate-pulse">
+            <i class="fas fa-calendar-plus text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <!-- Add Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <div class="flex">
+        <!-- Enhanced Colorful Sidebar -->
+        <div class="bg-gradient-to-b from-blue-50 to-purple-50 shadow-lg sticky top-0 h-screen w-40 z-50 flex flex-col items-center py-6 px-4 border-r border-blue-100">
+            <div class="flex flex-col items-center gap-4">
+                <!-- Hospital Logo with Text -->
+                <div class="bg-white p-3 rounded-full shadow-md border-2 border-blue-200">
+                    <i class="fa-solid fa-hospital text-3xl text-blue-600"></i>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-bold text-blue-800 text-sm">MEDI-Q</h3>
+                    <p class="text-xs text-purple-600 font-medium mt-1">HEALTHCARE</p>
+                </div>
+                
+                <!-- Appointments Label -->
+                <div class="mt-8 bg-gradient-to-r from-blue-400 to-purple-500 text-white px-4 py-2 rounded-full shadow-sm">
+                    <span class="text-xs font-semibold tracking-wide">APPOINTMENTS</span>
+                </div>
+
+                <!-- Dashboard Navigation -->
+                <div class="w-full mt-8 space-y-4">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition">
+                        <i class="fas fa-home text-blue-500"></i>
+                        <span class="text-sm font-medium">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition">
+                        <i class="fas fa-calendar-check text-blue-500"></i>
+                        <span class="text-sm font-medium">My Appointments</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition">
+                        <i class="fas fa-user-md text-blue-500"></i>
+                        <span class="text-sm font-medium">Doctors</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition">
+                        <i class="fas fa-file-medical text-blue-500"></i>
+                        <span class="text-sm font-medium">Medical Records</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition">
+                        <i class="fas fa-cog text-blue-500"></i>
+                        <span class="text-sm font-medium">Settings</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1">
+            <!-- Navigation -->
+            <nav class="bg-white shadow-sm sticky top-0 w-full z-40">
+                <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                <div class="flex-1"></div> <!-- Spacer to push items to right -->
+                <div class="flex items-center space-x-4">
+                    <button class="!rounded-button text-gray-600 hover:text-custom px-3 py-2"> <i
+                            class="fas fa-search"></i>
+                    </button>
+                    <button class="!rounded-button text-gray-600 hover:text-custom px-3 py-2"> <i
+                            class="far fa-bell"></i>
+                    </button>
+                    <button class="!rounded-button bg-custom text-white px-4 py-2"> Book Appointment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="pt-16">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-lg shadow-sm p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                <!-- Sidebar - Moved to top -->
+                <div class="md:w-1/4">
+                    <div class="sticky top-32 space-y-4" style="position: -webkit-sticky;">
+                        <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                            <h3 class="font-medium text-gray-900 mb-3">Find a Doctor</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Specialty</label>
+                                    <select class="w-full rounded-md border-gray-300 shadow-sm">
+                                        <option>All Specialties</option>
+                                        <option>Cardiology</option>
+                                        <option>Dermatology</option>
+                                        <option>Neurology</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                    <select class="w-full rounded-md border-gray-300 shadow-sm">
+                                        <option>All Locations</option>
+                                        <option>Main Hospital</option>
+                                        <option>North Clinic</option>
+                                    </select>
+                                </div>
+                                <button class="w-full bg-custom text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">
+                                    Search Doctors
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor Profile Section -->
+                <div class="md:w-3/4 relative group">
+                    <div class="relative overflow-hidden rounded-lg shadow-lg">
+                        <img src="https://static.vecteezy.com/system/resources/thumbnails/026/375/249/small_2x/ai-generative-portrait-of-confident-male-doctor-in-white-coat-and-stethoscope-standing-with-arms-crossed-and-looking-at-camera-photo.jpg"
+                            alt="Dr. John Smith" class="w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div class="text-white">
+                                <p class="text-sm">Board Certified Cardiologist</p>
+                                <p class="text-sm">Since 2008</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Education Section -->
+                    <div class="mt-6 bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-lg mb-4">Education & Qualifications</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-graduation-cap text-custom mt-1"></i>
+                                <div>
+                                    <p class="font-medium">MD, Cardiology</p>
+                                    <p class="text-gray-600 text-sm">Harvard Medical School, 2005</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-certificate text-custom mt-1"></i>
+                                <div>
+                                    <p class="font-medium">Board Certified</p>
+                                    <p class="text-gray-600 text-sm">American Board of Cardiology</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="flex items-center gap-4 mb-4">
+                        <h1 class="text-2xl font-bold text-gray-900">Dr. John Smith, MD</h1>
+                        <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-sm">Verified</span>
+                    </div>
+                    <p class="text-lg text-gray-600 mb-4">Cardiologist | Heart Specialist</p>
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <span class="font-medium">4.9</span>
+                            <span class="text-gray-500">(2.8k reviews)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user-md text-custom"></i>
+                            <span>15+ years experience</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">Dr. Smith is a board-certified cardiologist with extensive experience
+                        in treating various heart conditions. He specializes in preventive cardiology and heart failure
+                        management.</p>
+                    <!-- Real-time Availability Indicator -->
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                        <span class="text-green-600 font-medium">Available Now</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                            <p class="text-blue-600 mb-1">Patients</p>
+                            <p class="text-2xl font-bold text-gray-800">10,000+</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                            <p class="text-purple-600 mb-1">Experience</p>
+                            <p class="text-2xl font-bold text-gray-800">15+ years</p>
+                        </div>
+                    </div>
+
+                    <!-- Most Common Treatments -->
+                    <div class="mb-6">
+                        <h3 class="font-medium mb-2">Most Common Treatments</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm hover:scale-105 hover:shadow-sm transition-all duration-200">Angioplasty</span>
+                            <span class="bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 px-3 py-1 rounded-full text-sm hover:scale-105 hover:shadow-sm transition-all duration-200">ECG</span>
+                            <span class="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-3 py-1 rounded-full text-sm hover:scale-105 hover:shadow-sm transition-all duration-200">Stress Test</span>
+                            <span class="bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm hover:scale-105 hover:shadow-sm transition-all duration-200">Echocardiogram</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button class="!rounded-button flex-1 bg-custom text-white px-6 py-3"> <i
+                                class="fas fa-video mr-2"></i> Video Consultation
+                        </button>
+                        <button class="!rounded-button flex-1 border border-custom text-custom px-6 py-3"> <i
+                                class="fas fa-comment-medical mr-2"></i> Chat Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mt-8">
+                <div class="md:col-span-2">
+                    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+                        <h2 class="text-xl font-semibold mb-6">Available Appointments</h2>
+                    <!-- Vibrant Appointment Calendar -->
+                    <div class="mb-6 p-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl shadow-inner" id="appointmentCalendar">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-lg text-gray-800" id="currentMonth">March 2023</h3>
+                            <div class="flex gap-2">
+                                <button class="p-2 rounded-full hover:bg-custom/10 text-custom hover:scale-110 transition-all duration-200" onclick="prevMonth()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="p-2 rounded-full hover:bg-custom/10 text-custom hover:scale-110 transition-all duration-200" onclick="nextMonth()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 mb-4">
+                            <div class="text-center text-gray-500 text-sm font-medium">Sun</div>
+                            <div class="text-center text-gray-500 text-sm font-medium">Mon</div>
+                            <div class="text-center text-gray-500 text-sm font-medium">Tue</div>
+                            <div class="text-center text-gray-500 text-sm font-medium">Wed</div>
+                            <div class="text-center text-gray-500 text-sm font-medium">Thu</div>
+                            <div class="text-center text-gray-500 text-sm font-medium">Fri</div>
+                            <div class="text-center text-gray-500 text-sm font-medium">Sat</div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2" id="calendarDays"></div>
+                    </div>
+                        <div class="grid grid-cols-4 gap-4"> <button
+                                class="!rounded-button p-3 border border-custom text-custom text-center">09:00
+                                AM</button>
+                            <button class="!rounded-button p-3 border border-gray-200 text-center">10:00 AM</button>
+                            <button class="!rounded-button p-3 border border-gray-200 text-center">11:00 AM</button>
+                            <button class="!rounded-button p-3 border border-gray-200 text-center">02:00 PM</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <!-- Enhanced Reviews Section -->
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold">Patient Reviews</h2>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 text-sm rounded-full bg-custom text-white">All</button>
+                            <button class="px-3 py-1 text-sm rounded-full border border-gray-200">5 Stars</button>
+                            <button class="px-3 py-1 text-sm rounded-full border border-gray-200">4 Stars</button>
+                        </div>
+                    </div>
+                    <!-- Review Button -->
+                    <button id="showReviewFormBtn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-medium mb-6 hover:opacity-90 transition-all">
+                        Write a Review
+                    </button>
+
+                    <!-- Colorful Review Submission Form -->
+                    <div id="reviewFormContainer" class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-lg p-6 mb-6 transform hover:-translate-y-1 transition-all duration-300 border-2 border-indigo-200">
+                        <h3 class="font-medium mb-4">Leave a Review</h3>
+                        <form id="reviewForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom focus:border-transparent" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                                <div class="flex gap-1">
+                                    <button type="button" class="text-gray-300 hover:text-yellow-400 focus:outline-none" onclick="setRating(1)">★</button>
+                                    <button type="button" class="text-gray-300 hover:text-yellow-400 focus:outline-none" onclick="setRating(2)">★</button>
+                                    <button type="button" class="text-gray-300 hover:text-yellow-400 focus:outline-none" onclick="setRating(3)">★</button>
+                                    <button type="button" class="text-gray-300 hover:text-yellow-400 focus:outline-none" onclick="setRating(4)">★</button>
+                                    <button type="button" class="text-gray-300 hover:text-yellow-400 focus:outline-none" onclick="setRating(5)">★</button>
+                                </div>
+                                <input type="hidden" id="ratingValue" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Review</label>
+                                <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom focus:border-transparent" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-custom text-white py-2 rounded-md font-medium hover:bg-custom-dark transition-colors duration-300">
+                                Submit Review
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Review Card 1 -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                            <div class="flex items-start gap-4">
+                                <img src="https://creatie.ai/ai/api/search-image?query=A professional headshot of a young woman with a friendly smile, wearing business casual attire against a neutral background. The lighting is soft and natural, creating a warm and approachable appearance.&width=40&height=40&orientation=squarish&flag=7a2b4b41-62e5-4288-a17b-476c93988a58"
+                                    alt="Sarah Johnson" class="w-12 h-12 rounded-full">
+                                <div class="flex-1">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Sarah Johnson</p>
+                                            <div class="flex items-center gap-1 text-yellow-400 mt-1">
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="fas fa-star text-sm"></i>
+                                                <span class="text-gray-500 text-sm ml-1">5.0</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm text-gray-500">2 days ago</span>
+                                    </div>
+                                    <p class="text-gray-600 mt-2">Dr. Smith is an excellent doctor. He took the time to explain everything clearly and made me feel very comfortable. Highly recommend!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Card 2 -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                            <div class="flex items-start gap-4">
+                                <img src="https://creatie.ai/ai/api/search-image?query=A professional headshot of a middle-aged man with glasses, wearing a business suit against a neutral background. He has a confident and trustworthy expression.&width=40&height=40&orientation=squarish&flag=dce755ae-aeb4-4f63-a007-9e9bc15508d3"
+                                    alt="Michael Brown" class="w-12 h-12 rounded-full">
+                                <div class="flex-1">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Michael Brown</p>
+                                            <div class="flex items-center gap-1 text-yellow-400 mt-1">
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="fas fa-star text-sm"></i>
+                                                <i class="far fa-star text-sm"></i>
+                                                <span class="text-gray-500 text-sm ml-1">4.0</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm text-gray-500">1 week ago</span>
+                                    </div>
+                                    <p class="text-gray-600 mt-2">Very knowledgeable and professional. The video consultation was smooth and effective.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-1">
+                    <!-- Colorful Video Introduction Section -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-blue-100 rounded-xl shadow-lg p-6 mb-8 transform hover:-translate-y-1 transition-all duration-300 border-2 border-blue-200">
+                        <h2 class="text-xl font-semibold mb-6">Video Introduction</h2>
+                        <div class="relative aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden mb-4" id="videoContainer">
+                        <div class="relative aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden mb-4" id="videoContainer">
+                            <video id="doctorVideo" class="w-full h-full object-cover" poster="https://img.freepik.com/free-photo/doctor-with-his-arms-crossed-white-background_1368-5790.jpg">
+                                <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="absolute inset-0 flex items-center justify-center" id="playButton">
+                                <button class="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-xl hover:shadow-2xl hover:brightness-110">
+                                    <i class="fas fa-play text-2xl"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 hidden" id="videoControls">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2 px-1">
+                                        <button class="text-white hover:text-gray-200" id="playPauseBtn">
+                                            <i class="fas fa-pause"></i>
+                                        </button>
+                                        <div class="flex items-center gap-1">
+                                            <button class="text-white hover:text-gray-200" id="volumeBtn">
+                                                <i class="fas fa-volume-up"></i>
+                                            </button>
+                                            <input type="range" min="0" max="1" step="0.1" value="1" 
+                                                class="w-16 accent-custom" id="volumeControl">
+                                        </div>
+                                <div class="flex-1 h-3 bg-gray-200 rounded-full mx-2 overflow-hidden shadow-inner">
+                                    <div class="h-full bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 rounded-full animate-pulse" id="progressBar"></div>
+                                </div>
+                                        <span class="text-xs whitespace-nowrap" id="timeDisplay">0:00 / 0:00</span>
+                                        <button class="text-white hover:text-gray-200" id="fullscreenBtn">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute inset-0 flex items-center justify-center hidden" id="loadingSpinner">
+                                <div class="w-12 h-12 border-4 border-custom border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center space-y-3">
+                            <p class="text-gray-600 text-sm">Watch Dr. Smith's introduction video</p>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-xs">Board Certified Cardiologist</span>
+                                <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-xs">15+ Years Experience</span>
+                                <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-xs">Harvard Medical School</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                        <h2 class="text-xl font-semibold mb-6">Location</h2>
+                        <div class="aspect-w-16 aspect-h-9 mb-4">
+                            <img src="https://ai-public.creatie.ai/gen_page/map_placeholder_1280x720.png"
+                                alt="Location Map" class="rounded-lg object-cover">
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3"> <i class="fas fa-location-dot text-custom mt-1"></i>
+                                <p class="text-gray-600">123 Medical Center Drive, Suite 200<br>New York, NY 10001</p>
+                            </div>
+                            <div class="flex items-start gap-3"> <i class="fas fa-clock text-custom mt-1"></i>
+                                <div>
+                                    <p class="text-gray-600">Mon - Fri: 9:00 AM - 5:00 PM</p>
+                                    <p class="text-gray-600">Sat: 9:00 AM - 1:00 PM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-phone text-custom mt-1"></i>
+                                <p class="text-gray-600">+1 (555) 123-4567</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-xl font-semibold mb-6">Specializations</h2>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-sm hover:bg-custom/20 hover:scale-105 transition-all duration-200">Cardiology</span>
+                            <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-sm hover:bg-custom/20 hover:scale-105 transition-all duration-200">Heart Surgery</span>
+                            <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-sm hover:bg-custom/20 hover:scale-105 transition-all duration-200">Preventive Care</span>
+                            <span class="bg-custom/10 text-custom px-3 py-1 rounded-full text-sm hover:bg-custom/20 hover:scale-105 transition-all duration-200">ECG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Animated Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 text-white py-8">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <div class="md:w-1/2">
+                    <h1 class="text-3xl font-bold mb-3">Find Your Perfect Doctor</h1>
+                    <p class="text-lg mb-4">Expert care tailored to your needs</p>
+                    <div class="flex gap-3">
+                        <button class="bg-white text-blue-600 px-4 py-2 rounded-full font-medium hover:bg-blue-50 transition-all text-sm">
+                            Book Now
+                        </button>
+                        <button class="border border-white px-4 py-2 rounded-full font-medium hover:bg-white/10 transition-all text-sm">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg" 
+                         alt="Doctor Illustration" 
+                         class="w-full h-auto max-w-xs mx-auto">
+                </div>
+            </div>
+        </div>
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-500/10 to-purple-600/10"></div>
+            <div class="absolute -top-1/4 -left-1/4 w-[150%] h-[150%] animate-spin-slow opacity-50">
+                <div class="absolute top-1/4 left-1/4 w-20 h-20 rounded-full bg-white/5"></div>
+                <div class="absolute top-1/3 left-2/3 w-16 h-16 rounded-full bg-white/5"></div>
+                <div class="absolute top-2/3 left-1/3 w-24 h-24 rounded-full bg-white/5"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Contact Form -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-12">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h2 class="text-2xl font-bold mb-4">Have Questions?</h2>
+                    <p class="mb-6">Contact us directly and we'll get back to you within 24 hours.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg">
+                    <form class="space-y-4">
+                        <div>
+                            <input type="text" placeholder="Your Name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <input type="email" placeholder="Your Email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <textarea placeholder="Your Message" rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-all">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white mt-8">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <img src="https://cdn-icons-png.flaticon.com/512/3710/3710205.png" alt="Hospital Logo"
+                        class="h-8 mb-4">
+                    <p class="text-gray-600">Providing quality healthcare services to our community.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li>Find a Doctor</li>
+                        <li>Book Appointment</li>
+                        <li>Emergency Care</li>
+                        <li>Contact Us</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li>Cardiology</li>
+                        <li>Neurology</li>
+                        <li>Pediatrics</li>
+                        <li>Orthopedics</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Connect With Us</h3>
+                    <div class="flex gap-4"> <a href="#" class="text-gray-600 hover:text-custom">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-custom">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-custom">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-custom">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-100 mt-8 pt-8 text-center text-gray-600">
+                <p>&copy; 2024 Medical Care. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- Doctor Specialties Navigation Bar -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 transform translate-y-full transition-transform duration-300" id="specialtyNav">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="relative bg-white rounded-t-3xl shadow-xl pt-2 pb-4 px-6">
+                <div class="flex justify-between items-center px-4">
+                    <div class="flex justify-between w-full">
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-md mb-1">
+                                <i class="fas fa-heartbeat text-xl text-red-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Cardiology</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center shadow-md mb-1">
+                                <i class="fas fa-bone text-xl text-blue-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Orthopedic</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center shadow-md mb-1">
+                                <i class="fas fa-brain text-xl text-purple-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Neurology</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center shadow-md mb-1">
+                                <i class="fas fa-child text-xl text-green-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Pediatrics</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full flex items-center justify-center shadow-md mb-1">
+                                <i class="fas fa-eye text-xl text-yellow-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-gray-700">Ophthalmology</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-1">
+                    <span class="text-xs font-medium text-gray-500">Scroll up to hide</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let lastScrollTop = 0;
+        let ticking = false;
+        const nav = document.getElementById('specialtyNav');
+        const threshold = 100;
+        const debounceDelay = 100;
+
+        function handleScroll() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Only trigger if scrolled more than threshold
+            if (Math.abs(scrollTop - lastScrollTop) < threshold) return;
+            
+            if (scrollTop > lastScrollTop && scrollTop > threshold) {
+                // Scrolling down
+                nav.classList.remove('translate-y-full');
+            } else {
+                // Scrolling up or at top
+                nav.classList.add('translate-y-full');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }
+
+        function debounceScroll() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    handleScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', debounceScroll, { passive: true });
+        
+        // Initialize position
+        nav.classList.add('translate-y-full');
+    </script>
+
+    <!-- Appointment Confirmation Modal -->
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" id="confirmationModal">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold">Appointment Confirmed</h3>
+                <button class="text-gray-500 hover:text-gray-700" onclick="document.getElementById('confirmationModal').classList.add('hidden')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-calendar-check text-custom"></i>
+                    <p>Wednesday, March 29, 2023</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-clock text-custom"></i>
+                    <p>10:00 AM - 10:30 AM</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-user-md text-custom"></i>
+                    <p>Dr. John Smith</p>
+                </div>
+            </div>
+            <button class="w-full bg-custom text-white py-3 rounded-lg font-medium">
+                Add to Calendar
+            </button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .animate-spin-slow {
+            animation: spin-slow 20s linear infinite;
+        }
+    </style>
+
+    <script>
+        // Calendar functionality
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        function renderCalendar() {
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+
+            document.getElementById('currentMonth').textContent = 
+                `${firstDay.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+
+            let calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+
+            // Add empty cells for days before the first day of month
+            for (let i = 0; i < startingDay; i++) {
+                calendarDays.innerHTML += `<div class="aspect-square"></div>`;
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = new Date().getDate() === day && 
+                               new Date().getMonth() === currentMonth && 
+                               new Date().getFullYear() === currentYear;
+                               
+                calendarDays.innerHTML += `
+                    <button class="aspect-square rounded-full flex items-center justify-center text-sm 
+                        ${isToday ? 'bg-custom text-white' : 'hover:bg-gray-100'}"
+                        onclick="selectDate(${day})">
+                        ${day}
+                    </button>`;
+            }
+        }
+
+        function prevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+
+        function selectDate(day) {
+            const selectedDate = new Date(currentYear, currentMonth, day);
+            document.querySelectorAll('#calendarDays button').forEach(btn => {
+                btn.classList.remove('bg-custom', 'text-white');
+            });
+            event.target.classList.add('bg-custom', 'text-white');
+            // You can store the selected date for later use
+        }
+
+        // Review form toggle functionality
+        const showReviewFormBtn = document.getElementById('showReviewFormBtn');
+        const reviewFormContainer = document.getElementById('reviewFormContainer');
+        
+        showReviewFormBtn.addEventListener('click', () => {
+            reviewFormContainer.classList.toggle('hidden');
+            showReviewFormBtn.classList.toggle('hidden');
+        });
+
+        // Review form functionality
+        let currentRating = 0;
+        
+        function setRating(rating) {
+            currentRating = rating;
+            document.getElementById('ratingValue').value = rating;
+            const stars = document.querySelectorAll('#reviewForm [type="button"]');
+            stars.forEach((star, index) => {
+                star.classList.toggle('text-yellow-400', index < rating);
+                star.classList.toggle('text-gray-300', index >= rating);
+            });
+        }
+
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const rating = formData.get('rating');
+            const review = formData.get('review');
+            
+            // In a real app, you would send this to a server
+            alert(`Thank you for your ${rating}-star review, ${name}!`);
+            this.reset();
+            setRating(0);
+        });
+
+        // Video player functionality
+        const video = document.getElementById('doctorVideo');
+        const playButton = document.getElementById('playButton');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const progressBar = document.getElementById('progressBar');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const videoControls = document.getElementById('videoControls');
+        const volumeBtn = document.getElementById('volumeBtn');
+        const volumeControl = document.getElementById('volumeControl');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const videoContainer = document.getElementById('videoContainer');
+
+        // Format time in MM:SS
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Update progress bar and time display
+        function updateProgress() {
+            const percent = (video.currentTime / video.duration) * 100;
+            progressBar.style.width = `${percent}%`;
+            timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                playButton.classList.add('hidden');
+                videoControls.classList.remove('hidden');
+            } else {
+                video.pause();
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        // Initialize video volume
+        video.volume = volumeControl.value;
+
+        // Event listeners
+        playButton.addEventListener('click', () => {
+            togglePlay();
+            videoControls.classList.remove('hidden');
+        });
+
+        playPauseBtn.addEventListener('click', togglePlay);
+
+        // Volume controls
+        volumeControl.addEventListener('input', () => {
+            video.volume = volumeControl.value;
+            volumeBtn.innerHTML = video.volume === 0 
+                ? '<i class="fas fa-volume-mute"></i>' 
+                : '<i class="fas fa-volume-up"></i>';
+        });
+
+        volumeBtn.addEventListener('click', () => {
+            video.volume = video.volume > 0 ? 0 : 1;
+            volumeControl.value = video.volume;
+            volumeBtn.innerHTML = video.volume === 0 
+                ? '<i class="fas fa-volume-mute"></i>' 
+                : '<i class="fas fa-volume-up"></i>';
+        });
+
+        // Fullscreen
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                videoContainer.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Loading state
+        video.addEventListener('waiting', () => {
+            loadingSpinner.classList.remove('hidden');
+        });
+
+        video.addEventListener('playing', () => {
+            loadingSpinner.classList.add('hidden');
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (!videoContainer.contains(document.activeElement)) return;
+            
+            switch(e.key) {
+                case ' ':
+                    togglePlay();
+                    break;
+                case 'ArrowRight':
+                    video.currentTime += 5;
+                    break;
+                case 'ArrowLeft':
+                    video.currentTime -= 5;
+                    break;
+                case 'ArrowUp':
+                    video.volume = Math.min(video.volume + 0.1, 1);
+                    volumeControl.value = video.volume;
+                    break;
+                case 'ArrowDown':
+                    video.volume = Math.max(video.volume - 0.1, 0);
+                    volumeControl.value = video.volume;
+                    break;
+                case 'f':
+                    fullscreenBtn.click();
+                    break;
+                case 'm':
+                    volumeBtn.click();
+                    break;
+            }
+        });
+
+        video.addEventListener('timeupdate', updateProgress);
+        video.addEventListener('ended', () => {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playButton.classList.remove('hidden');
+            videoControls.classList.add('hidden');
+        });
+
+        // Initialize calendar
+        renderCalendar();
+
+        // Confirmation modal
+        document.querySelectorAll('[data-book-appointment]').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('confirmationModal').classList.remove('hidden');
+            });
+        });
+
+    </script>
+</body>
+
+</html>
